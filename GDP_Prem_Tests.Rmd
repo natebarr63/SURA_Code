@@ -1,0 +1,74 @@
+---
+title: "GDP_Prem_Tests"
+author: "Nathan Barretto"
+date: "2024-05-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+#importing the two datasets: GDP data and Veronesi data 
+proxy_data <- read_csv("data_policycle.csv")
+gdp_data <- read_csv("USGDP.csv")
+combined_data <- merge(proxy_data, gdp_data)
+
+```
+
+
+
+```{r}
+#invert rows and columns for gdp dataset
+#source: https://stackoverflow.com/questions/33643181/how-do-i-flip-rows-and-columns-in-r
+gdp_data_2 <- data.frame(t(gdp_data[-1]))
+colnames(gdp_data_2) <- gdp_data[, 1]
+```
+
+```{r}
+#rename columns in proxy dataset
+
+#first column name changed to year_month
+colnames(proxy_data)[1] <- "quarter_year"
+
+```
+
+```{r}
+#adjust column names in gdp dataset to get the names of the columns to be that 
+#of the first row names
+
+for (x in 3:38) {
+  name <- gdp_data_2[1,x]
+  name_string <- toString(name) 
+  colnames(gdp_data_2)[x] <- name_string
+}
+```
+
+
+```{r}
+#Adjust column names in proxy and gdp data to accurately reflect measurements
+colnames(proxy_data)[67] <- "DPRatio"
+#one-year equity premium bound proposed by Ian Martin in 2017
+colnames(proxy_data)[70] <- "EP_Bound"
+colnames(proxy_data)[47] <- "IPO_Gross"
+colnames(proxy_data)[75] <- "Price_Volatile_Stocks"
+colnames(proxy_data)[69] <- "Surplus_Cons_Ratio"
+colnames(proxy_data)[76] <- "Agreggate_Risk_Aversion"
+colnames(proxy_data)[19] <- "Unemployment_Rate"
+colnames(gdp_data_2)[5] <- "GDP"
+```
+
+
+```{r}
+#delete row 1 of gdp_data with the old names
+gdp_data_2 <- gdp_data_2[-c(1), ]
+
+```
+
+
+```{r}
+#Run correlation tests
+gdp_data_2$GDP <- as.numeric(gdp_data_2$GDP)
+proxy_data$Unemployment_Rate <- as.numeric(proxy_data$Unemployment_Rate)
+cor(gdp_data_2$GDP, proxy_data$Unemployment_Rate)
+
+```
+
