@@ -339,3 +339,27 @@ summary(IPO.aov)
 boxplot(IPO_Gross~Quarter,data=combined_data_IPO_Gross, main="Gross IPO vs Yearly Quarter",
    xlab="Quarter", ylab="Gross IPO")
 ```
+```{r}
+#Run correlation tests between different GDP measures and gross IPO
+
+#Correlation with GNP
+cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Gross.national.product))
+
+#Correlation with GDP
+cor(combined_data_IPO_Gross$IPO_Gross,  as.numeric(combined_data_IPO_Gross$GDP))
+
+#Correlation with GPDI
+cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Gross.private.domestic.investment))
+
+#Correlation with nondurable goods
+cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Nondurable.goods))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Personal.consumption.expenditures))
+
+```
+```{r}
+#all negative correlations around -0.2, indicates weak, negative correlation
+```
+
