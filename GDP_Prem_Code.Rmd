@@ -155,10 +155,37 @@ geom_mean = function(months){
     result[[len_result + 1]] <- value
     i = i + 3
   }
-  return (result)
+  return (as.numeric(result))
 }
 
 ```
+
+```{r}
+#Create arithmetic mean function to get arithmetic mean for quarters 
+#for proxy_data
+#Will use this for proxy measures that have negative values
+ari_mean = function(months){
+  result <- c()
+  i = 1
+  while(i < length(months)) {
+    total <- c()
+    for (j in 0:2){
+      len_total <- length(total)
+      total[[len_total + 1]] <- as.numeric(months[i + j])
+    }
+    value = mean(as.numeric(total))
+    len_result <- length(result)
+    result[[len_result + 1]] <- value
+    i = i + 3
+  }
+  return (as.numeric(result))
+}
+
+```
+
+
+
+
 
 
 ```{r}
@@ -166,6 +193,16 @@ geom_mean = function(months){
 #I will split the large, combined dataset into smaller individual datasets by specific 
 #proxy measure
 
+
+#The 7 measures and their respective datasets:
+  
+#1. IPOGross (Gross Initial Public Offering),combined_data_IPO_Gross
+#2. Aggregate , combined_data_Agreggate_Risk_Aversion
+#3. DP (Dividend Price Ratio), combined_data_DPRatio
+#4. EPBound (Equity Premium Bound), combined_data_EPBound
+#5. SCR (Surplus Consumption Ratio), combined_data_surplus
+#6. UNE (Unemployment Rate), combined_data_UNE
+#7. PVS (Price of Volatile Stocks), combined_data_PVS
 ```
 
 
@@ -186,17 +223,119 @@ rm(combined_data)
 #Apply geom mean function to different proxy measures by quarter average and
 #add them to new, cumulative dataset
 #Aggregate Risk Aversion only has data from 1990 - 2010
-#Start by changing proxy_mod_data to only include this 
-combined_data_Agreggate_Risk_Aversion <- data.frame(gdp_data_mod_final)
-combined_data_Agreggate_Risk_Aversion <- combined_data_Agreggate_Risk_Aversion[-c(1: 120), ]
-combined_data_Agreggate_Risk_Aversion <- combined_data_Agreggate_Risk_Aversion[-c(85: 104), ]
+#Start by changing gdp_data to only include this 
+combined_data_Aggregate_Risk_Aversion <- data.frame(gdp_data_mod_final)
+combined_data_Aggregate_Risk_Aversion <- combined_data_Aggregate_Risk_Aversion[-c(1: 120), ]
+combined_data_Aggregate_Risk_Aversion <- combined_data_Aggregate_Risk_Aversion[-c(85: 104), ]
 #Do the same for the proxy data 
 proxy_data_cut <- data.frame(proxy_data_mod_final)
 proxy_data_cut <- proxy_data_cut[-c(613: 672), ]
 proxy_data_cut <- proxy_data_cut[-c(1: 360), ]
-#Since aggregate risk aversion has 
+#Since aggregate risk aversion has negatives use arithmetic mean for quarter averages
 #Aggregate Risk Aversion By Quarter Added
-#combined_data_Agreggate_Risk_Aversion$Agreggate_Risk_Aversion = geom_mean(proxy_data_cut$Agreggate_Risk_Aversion)
+combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion = ari_mean(proxy_data_cut$Agreggate_Risk_Aversion)
 #
 ```
 
+
+```{r}
+#Apply geom mean function to different proxy measures by quarter average and
+#add them to new, cumulative dataset with that measure for testing
+combined_data_DPRatio <- data.frame(gdp_data_mod_final)
+#DPRatio By Quarter Added
+combined_data_DPRatio$DPRatio = geom_mean(proxy_data_mod_final$DPRatio)
+```
+
+```{r}
+#Apply geom mean function to different proxy measures by quarter average and
+#add them to new, cumulative dataset
+#Equity Premium Bound only has data from 1996 - 2011
+#Start by changing gdp_data to only include this 
+combined_data_EPBound <- data.frame(gdp_data_mod_final)
+combined_data_EPBound <- combined_data_EPBound[-c(1: 144), ]
+combined_data_EPBound <- combined_data_EPBound[-c(65: 80), ]
+#Do the same for the proxy data 
+proxy_data_cut <- data.frame(proxy_data_mod_final)
+proxy_data_cut <- proxy_data_cut[-c(625: 672), ]
+proxy_data_cut <- proxy_data_cut[-c(1: 432), ]
+#Equity Premium Bound By Quarter Added
+combined_data_EPBound$EPBound = geom_mean(proxy_data_cut$EP_Bound)
+#
+```
+
+
+
+```{r}
+#Apply geom mean function to different proxy measures by quarter average and
+#add them to new, cumulative dataset with that measure for testing
+combined_data_surplus <- data.frame(gdp_data_mod_final)
+#Surplus Consumption Ratio By Quarter Added
+#negative values so use arithmetic mean
+combined_data_surplus$SCR = ari_mean(proxy_data_mod_final$Surplus_Cons_Ratio)
+
+```
+
+```{r}
+#Apply geom mean function to different proxy measures by quarter average and
+#add them to new, cumulative dataset with that measure for testing
+combined_data_UNE <- data.frame(gdp_data_mod_final)
+#Unemployment Rate By Quarter Added
+combined_data_UNE$UNE = geom_mean(proxy_data_mod_final$Unemployment_Rate)
+
+```
+
+
+
+```{r}
+#Apply geom mean function to different proxy measures by quarter average and
+#add them to new, cumulative dataset with that measure for testing
+#PVS only has data from 1970 quarter 2, and is itself only available by quarter
+combined_data_PVS <- data.frame(gdp_data_mod_final)
+combined_data_PVS <- combined_data_PVS[-c(1: 41), ]
+proxy_data_cut <- data.frame(proxy_data_mod_final)
+proxy_data_cut <- proxy_data_cut[-c(1: 123), ]
+#Run a for loop to keep every third row with the pvs data of the quarter in 
+#the proxy dataset
+ i = 3
+ total <- c()
+ while(i <= length(proxy_data_cut$Price_Volatile_Stocks)) {
+    value = proxy_data_cut$Price_Volatile_Stocks[i]
+    len_total <- length(total)
+    total[[len_total + 1]] <- value
+    i = i + 3
+  }
+#Price of Volatile Stock By Quarter Added
+combined_data_PVS$PVS = total
+
+```
+
+```{r}
+#All datasets now completed, can begin running tests
+```
+
+
+
+```{r}
+#Start with an anova test for Gross IPO
+
+#1: Anova test on the quarters to see if there is difference in the Gross IPO 
+#by time in the year
+
+IPO.aov <- aov(IPO_Gross ~ Quarter, data = combined_data_IPO_Gross)
+# Summary
+summary(IPO.aov)
+
+
+```
+```{r}
+#P-value of 0.351. Indicates that there are no significant differences in the 
+#mean gross ipo by quarter 
+```
+
+
+
+```{r}
+#boxplots of the quarter ~ gross ipo relationship
+boxplot(IPO_Gross~Quarter,data=combined_data_IPO_Gross, main="Gross IPO vs Yearly Quarter",
+   xlab="Quarter", ylab="Gross IPO")
+```
