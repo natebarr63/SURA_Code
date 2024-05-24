@@ -336,6 +336,9 @@ summary(IPO.aov)
 
 ```{r}
 #boxplots of the quarter ~ gross ipo relationship
+#Notes: Outliers present for Q3 and Q4
+#Notes: Q1 most similar to Q3, Q2 most similar to Q4
+#Notes: Potential oscillation between quarters?
 boxplot(IPO_Gross~Quarter,data=combined_data_IPO_Gross, main="Gross IPO vs Yearly Quarter",
    xlab="Quarter", ylab="Gross IPO")
 ```
