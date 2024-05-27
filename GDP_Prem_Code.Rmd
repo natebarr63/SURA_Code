@@ -314,6 +314,13 @@ combined_data_PVS$PVS = total
 ```
 
 
+```{r}
+
+#Equity Premium Proxy Measure 1: Gross IPO, all tests and graphs below
+
+
+```
+
 
 ```{r}
 #Start with an anova test for Gross IPO
@@ -342,9 +349,10 @@ summary(IPO.aov)
 boxplot(IPO_Gross~Quarter,data=combined_data_IPO_Gross, main="Gross IPO vs Yearly Quarter",
    xlab="Quarter", ylab="Gross IPO")
 ```
+
 ```{r}
 #Run correlation tests between different GDP measures and gross IPO
-
+#Years: 1960 to 2015
 #Correlation with GNP
 cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Gross.national.product))
 
@@ -366,3 +374,613 @@ cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Person
 #all negative correlations around -0.2, indicates weak, negative correlation
 ```
 
+```{r}
+#Linear regression tests
+#Start with gross ipo and GNP
+lmIPO_GNP = lm(as.numeric(Gross.national.product) ~ IPO_Gross, data = combined_data_IPO_Gross) 
+summary(lmIPO_GNP) 
+
+#try with no intercept now
+lmIPO_GNP_NOINT = lm(as.numeric(Gross.national.product) ~ IPO_Gross - 1, data = combined_data_IPO_Gross) 
+summary(lmIPO_GNP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#gross ipo and gdp
+lmIPO_GDP = lm(as.numeric(GDP) ~ IPO_Gross, data = combined_data_IPO_Gross) 
+summary(lmIPO_GDP) 
+
+#try with no intercept now (X - 1)
+lmIPO_GDP_NOINT = lm(as.numeric(GDP) ~ IPO_Gross - 1, data = combined_data_IPO_Gross) 
+summary(lmIPO_GDP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#gross ipo and Gross private domestic investment
+lmIPO_GDP = lm(as.numeric(Gross.private.domestic.investment) ~ IPO_Gross, data = combined_data_IPO_Gross) 
+summary(lmIPO_GDP) 
+
+#try with no intercept now (X - 1)
+lmIPO_GPDI_NOINT = lm(as.numeric(Gross.private.domestic.investment) ~ IPO_Gross - 1, data = combined_data_IPO_Gross) 
+summary(lmIPO_GPDI_NOINT) 
+```
+```{r}
+#Linear regression tests
+#gross ipo and nondurable goods
+lmIPO_NDG = lm(as.numeric(Nondurable.goods) ~ IPO_Gross, data = combined_data_IPO_Gross) 
+summary(lmIPO_NDG) 
+
+#try with no intercept now (X - 1)
+lmIPO_NDG_NOINT = lm(as.numeric(Nondurable.goods) ~ IPO_Gross - 1, data = combined_data_IPO_Gross) 
+summary(lmIPO_NDG_NOINT) 
+```
+```{r}
+#Linear regression tests
+#gross ipo and personal consumption expenditures
+lmIPO_PCE = lm(as.numeric(Personal.consumption.expenditures) ~ IPO_Gross, data = combined_data_IPO_Gross) 
+summary(lmIPO_PCE) 
+
+#try with no intercept now (X - 1)
+lmIPO_PCE_NOINT = lm(as.numeric(Personal.consumption.expenditures) ~ IPO_Gross - 1, data = combined_data_IPO_Gross) 
+summary(lmIPO_PCE_NOINT) 
+```
+
+
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Start with IPO Gross and GNP
+ combined_data_IPO_Gross|>
+  ggplot(aes(x = IPO_Gross, y = Gross.national.product,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Gross IPO", y = "GNP", color = "Quarter", 
+       title = "Gross IPO vs Gross National Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and GDP
+ combined_data_IPO_Gross|>
+  ggplot(aes(x = IPO_Gross, y = GDP,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Gross IPO", y = "GDP", color = "Quarter", 
+       title = "Gross IPO vs Gross Domestic Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and GPDI
+ combined_data_IPO_Gross|>
+  ggplot(aes(x = IPO_Gross, y = Gross.private.domestic.investment,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Gross IPO", y = "Gross private domestic investment", color = "Quarter", 
+       title = "Gross IPO vs Gross private domestic investment by Quarter")
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and Nondurable Goods
+ combined_data_IPO_Gross|>
+  ggplot(aes(x = IPO_Gross, y = Nondurable.goods,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Gross IPO", y = "Nondurable Goods", color = "Quarter", 
+       title = "Gross IPO vs Nondurable Goods by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and Personal consumption expenditures
+ combined_data_IPO_Gross|>
+  ggplot(aes(x = IPO_Gross, y = Personal.consumption.expenditures,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Gross IPO", y = "Personal consumption expenditures", color = "Quarter", 
+       title = "Gross IPO vs Personal Consumption Expenditures by Quarter")
+```
+
+
+```{r}
+
+#Equity Premium Proxy Measure 2: Dividend Price ratio, all tests and graphs below
+
+
+```
+
+```{r}
+#Start with an anova test for DP ratio
+
+#1: Anova test on the quarters to see if there is difference in the DP Ratio
+#by time in the year
+
+DP.aov <- aov(DPRatio ~ Quarter, data = combined_data_DPRatio)
+# Summary
+summary(DP.aov)
+
+
+```
+```{r}
+#P-value of 0.996. Indicates that there are no significant differences in the 
+#mean DP Ratio by quarter 
+```
+
+
+
+```{r}
+#boxplots of the quarter ~ gross ipo relationship
+#Notes: No real Outliers 
+#Notes: Almost all 4 quarters identical
+#Notes: No real oscillation between quarters like with gross IPO
+#Notes: Q3 has the smallest IQR
+boxplot(DPRatio~Quarter,data=combined_data_DPRatio, main="DP Ratio vs Yearly Quarter",
+   xlab="Quarter", ylab="DP Ratio")
+```
+
+```{r}
+#Run correlation tests between different GDP measures and DPRatio
+#Years: 1960 to 2015 (Full Data)
+#Correlation with GNP
+cor(combined_data_DPRatio$DPRatio, as.numeric(combined_data_DPRatio$Gross.national.product))
+
+#Correlation with GDP
+cor(combined_data_DPRatio$DPRatio,  as.numeric(combined_data_DPRatio$GDP))
+
+#Correlation with GPDI
+cor(combined_data_DPRatio$DPRatio, as.numeric(combined_data_DPRatio$Gross.private.domestic.investment))
+
+#Correlation with nondurable goods
+cor(combined_data_DPRatio$DPRatio, as.numeric(combined_data_DPRatio$Nondurable.goods))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_DPRatio$DPRatio, as.numeric(combined_data_DPRatio$Personal.consumption.expenditures))
+
+```
+```{r}
+#Notes: All positive correlations, greater than 0.6 for GDP, GNP, and Personal consumption expenditures indicating 
+#indicating strong correlations with those items
+```
+
+
+```{r}
+#Linear regression tests
+#Start with DPRatio and GNP
+lmDP_GNP = lm(as.numeric(Gross.national.product) ~ DPRatio, data = combined_data_DPRatio) 
+summary(lmDP_GNP) 
+
+#try with no intercept now
+lmDP_GNP_NOINT = lm(as.numeric(Gross.national.product) ~ DPRatio - 1, data = combined_data_DPRatio) 
+summary(lmDP_GNP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#DPRatio and gdp
+lmDP_GDP = lm(as.numeric(GDP) ~ DPRatio, data = combined_data_DPRatio) 
+summary(lmDP_GDP) 
+
+#try with no intercept now (X - 1)
+lmDP_GDP_NOINT = lm(as.numeric(GDP) ~ DPRatio - 1, data = combined_data_DPRatio) 
+summary(lmDP_GDP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#DPRatio and Gross private domestic investment
+lmDP_GPDI = lm(as.numeric(Gross.private.domestic.investment) ~ DPRatio, data = combined_data_DPRatio) 
+summary(lmDP_GPDI) 
+
+#try with no intercept now (X - 1)
+lmDP_GPDI_NOINT = lm(as.numeric(Gross.private.domestic.investment) ~ DPRatio - 1, data = combined_data_DPRatio) 
+summary(lmDP_GPDI_NOINT) 
+```
+```{r}
+#Linear regression tests
+#DPRatio and nondurable goods
+lmDP_NDG = lm(as.numeric(Nondurable.goods) ~ DPRatio, data = combined_data_DPRatio) 
+summary(lmDP_NDG) 
+
+#try with no intercept now (X - 1)
+lmDP_NDG_NOINT = lm(as.numeric(Nondurable.goods) ~ DPRatio - 1, data = combined_data_DPRatio) 
+summary(lmDP_NDG_NOINT) 
+```
+```{r}
+#Linear regression tests
+#gross ipo and personal consumption expenditures
+lmDP_PCE = lm(as.numeric(Personal.consumption.expenditures) ~ DPRatio, data = combined_data_DPRatio) 
+summary(lmDP_PCE) 
+
+#try with no intercept now (X - 1)
+lmDP_PCE_NOINT = lm(as.numeric(Personal.consumption.expenditures) ~ DPRatio - 1, data = combined_data_DPRatio) 
+summary(lmDP_PCE_NOINT) 
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Start with DPRatio and GNP
+ combined_data_DPRatio|>
+  ggplot(aes(x = DPRatio, y = Gross.national.product,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "DPRatio", y = "GNP", color = "Quarter", 
+       title = "DPRatio vs Gross National Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#DPRatio and GDP
+ combined_data_DPRatio|>
+  ggplot(aes(x = DPRatio, y = GDP,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "DPRatio", y = "GDP", color = "Quarter", 
+       title = "DPRatio vs Gross Domestic Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and GPDI
+ combined_data_DPRatio|>
+  ggplot(aes(x = DPRatio, y = Gross.private.domestic.investment,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "DPRatio", y = "Gross private domestic investment", color = "Quarter", 
+       title = "DPRatio vs Gross private domestic investment by Quarter")
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and Nondurable Goods
+ combined_data_DPRatio|>
+  ggplot(aes(x = DPRatio, y = Nondurable.goods,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "DPRatio", y = "Nondurable Goods", color = "Quarter", 
+       title = "DPRatio vs Nondurable Goods by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and Personal consumption expenditures
+ combined_data_DPRatio|>
+  ggplot(aes(x = DPRatio, y = Personal.consumption.expenditures,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "DPRatio", y = "Personal consumption expenditures", color = "Quarter", 
+       title = "DPRatio vs Personal Consumption Expenditures by Quarter")
+```
+
+```{r}
+
+#Equity Premium Proxy Measure 3: EPBound, all tests and graphs below
+
+
+```
+
+```{r}
+#Start with an anova test for EPBound
+
+#1: Anova test on the quarters to see if there is difference in the Gross IPO 
+#by time in the year
+
+EP.aov <- aov(EPBound ~ Quarter, data = combined_data_EPBound)
+# Summary
+summary(EP.aov)
+
+
+```
+```{r}
+#P-value of 0.521. Indicates that there are no significant differences in the 
+#mean gross EPBound by quarter 
+```
+
+
+
+```{r}
+#boxplots of the quarter ~ gross ipo relationship
+#Notes: Outliers present for all quarters
+#Notes: Q1 and Q2 medians similiar, Q1 and Q4 similiar IQR's
+#Notes: No distinguishable oscillation between quarters
+boxplot( EPBound~Quarter,data=combined_data_EPBound, main="EPBound vs Yearly Quarter",
+   xlab="Quarter", ylab=" EPBound")
+```
+
+```{r}
+#Run correlation tests between different GDP measures and gross IPO
+#Years: 1960 to 2015
+#Correlation with GNP
+cor(combined_data_EPBound$EPBound, as.numeric(combined_data_EPBound$Gross.national.product))
+
+#Correlation with GDP
+cor(combined_data_EPBound$EPBound,  as.numeric(combined_data_EPBound$GDP))
+
+#Correlation with GPDI
+cor(combined_data_EPBound$EPBound, as.numeric(combined_data_EPBound$Gross.private.domestic.investment))
+
+#Correlation with nondurable goods
+cor(combined_data_EPBound$EPBound, as.numeric(combined_data_EPBound$Nondurable.goods))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_EPBound$EPBound, as.numeric(combined_data_EPBound$Personal.consumption.expenditures))
+
+```
+```{r}
+#all negative correlations, personal consumption expenditures at -0.71 indicates strong negative relationship 
+```
+
+
+```{r}
+#Linear regression tests
+#Start with EPBound and GNP
+lmEPBound_GNP = lm(as.numeric(Gross.national.product) ~ EPBound, data = combined_data_EPBound) 
+summary(lmIPO_GNP) 
+
+#try with no intercept now
+lmEPBound_GNP_NOINT = lm(as.numeric(Gross.national.product) ~ EPBound - 1, data = combined_data_EPBound) 
+summary(lmIPO_GNP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#EPBound and gdp
+lmEPBound_GDP = lm(as.numeric(GDP) ~ EPBound, data = combined_data_EPBound) 
+summary(lmEPBound_GDP) 
+
+#try with no intercept now (X - 1)
+lmEPBound_GDP_NOINT = lm(as.numeric(GDP) ~ EPBound - 1, data = combined_data_EPBound) 
+summary(lmEPBound_GDP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#EPBound and Gross private domestic investment
+lmEPBound_GDP = lm(as.numeric(Gross.private.domestic.investment) ~ EPBound, data = combined_data_EPBound) 
+summary(lmEPBound_GDP) 
+
+#try with no intercept now (X - 1)
+lmEPBound_GPDI_NOINT = lm(as.numeric(Gross.private.domestic.investment) ~ EPBound - 1, data = combined_data_EPBound) 
+summary(lmEPBound_GPDI_NOINT) 
+```
+```{r}
+#Linear regression tests
+#EPBound and nondurable goods
+lmEPBound_NDG = lm(as.numeric(Nondurable.goods) ~ EPBound, data = combined_data_EPBound) 
+summary(lmIPO_NDG) 
+
+#try with no intercept now (X - 1)
+lmEPBound_NDG_NOINT = lm(as.numeric(Nondurable.goods) ~ EPBound - 1, data = combined_data_EPBound) 
+summary(lmEPBound_NDG_NOINT) 
+```
+```{r}
+#Linear regression tests
+#EPBound and personal consumption expenditures
+lmEPBound_PCE = lm(as.numeric(Personal.consumption.expenditures) ~ EPBound, data = combined_data_EPBound) 
+summary(lmEPBound_PCE) 
+
+#try with no intercept now (X - 1)
+lmEPBound_PCE_NOINT = lm(as.numeric(Personal.consumption.expenditures) ~ EPBound - 1, data = combined_data_EPBound) 
+summary(lmEPBound_PCE_NOINT) 
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Start with IPO Gross and GNP
+ combined_data_EPBound|>
+  ggplot(aes(x = EPBound, y = Gross.national.product,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "EPBound", y = "GNP", color = "Quarter", 
+       title = "EPBound vs Gross National Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and GDP
+ combined_data_EPBound|>
+  ggplot(aes(x = EPBound, y = GDP,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "EPBound", y = "GDP", color = "Quarter", 
+       title = "EPBound vs Gross Domestic Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and GPDI
+ combined_data_EPBound|>
+  ggplot(aes(x = EPBound, y = Gross.private.domestic.investment,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "EPBound", y = "Gross private domestic investment", color = "Quarter", 
+       title = "EPBound vs Gross private domestic investment by Quarter")
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and Nondurable Goods
+ combined_data_EPBound|>
+  ggplot(aes(x = EPBound, y = Nondurable.goods,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "EPBound", y = "Nondurable Goods", color = "Quarter", 
+       title = "EPBound vs Nondurable Goods by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and Personal consumption expenditures
+ combined_data_EPBound|>
+  ggplot(aes(x = EPBound, y = Personal.consumption.expenditures,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "EPBound", y = "Personal consumption expenditures", color = "Quarter", 
+       title = "EPBound vs Personal Consumption Expenditures by Quarter")
+```
+
+```{r}
+
+#Risk Aversion Measure 1: PVS, all tests and graphs below
+
+
+```
+
+
+```{r}
+#Start with an anova test for PVS
+
+#1: Anova test on the quarters to see if there is difference in the Gross IPO 
+#by time in the year
+
+PVS.aov <- aov(as.numeric(PVS) ~ Quarter, data = combined_data_PVS)
+# Summary
+summary(PVS.aov)
+
+
+```
+```{r}
+#P-value of 0.288. Indicates that there are no significant differences in the 
+#mean gross ipo by quarter 
+```
+
+
+
+```{r}
+#boxplots of the quarter ~ PVS relationship
+#Notes: Outliers present for Q1, Q2, and Q4
+#Notes: Q4 has the biggest IQR
+#Notes: No real oscillation between quarters
+boxplot(as.numeric(PVS) ~Quarter,data=combined_data_PVS, main="PVS vs Yearly Quarter",
+   xlab="Quarter", ylab="PVS")
+```
+
+```{r}
+#Run correlation tests between different GDP measures and gross IPO
+#Years: 1960 to 2015
+#Correlation with GNP
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$Gross.national.product))
+
+#Correlation with GDP
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$GDP))
+
+#Correlation with GPDI
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$Gross.private.domestic.investment))
+
+#Correlation with nondurable goods
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$Nondurable.goods))
+
+
+#Correlation with personal consumption expenditures
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$Personal.consumption.expenditures))
+
+```
+```{r}
+#all positive correlations below 0.15, indicates weak, positive correlation
+```
+
+```{r}
+#Linear regression tests
+#Start with PVS and GNP
+lmPVS_GNP = lm(as.numeric(Gross.national.product) ~ as.numeric(PVS), data = combined_data_PVS) 
+summary(lmIPO_GNP) 
+
+#try with no intercept now
+lmPVS_GNP_NOINT = lm(as.numeric(Gross.national.product) ~ as.numeric(PVS) - 1, data = combined_data_PVS) 
+summary(lmPVS_GNP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#gross PVS and gdp
+lmPVS_GDP = lm(as.numeric(GDP) ~ as.numeric(PVS), data = combined_data_PVS) 
+summary(lmPVS_GDP) 
+
+#try with no intercept now (X - 1)
+lmPVS_GDP_NOINT = lm(as.numeric(GDP) ~ as.numeric(PVS) - 1, data = combined_data_PVS) 
+summary(lmPVS_GDP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#PVS and Gross private domestic investment
+lmPVS_GDP = lm(as.numeric(Gross.private.domestic.investment) ~ as.numeric(PVS), data = combined_data_PVS) 
+summary(lmPVS_GDP) 
+
+#try with no intercept now (X - 1)
+lmPVS_GPDI_NOINT = lm(as.numeric(Gross.private.domestic.investment) ~ as.numeric(PVS) - 1, data = combined_data_PVS) 
+summary(lmPVS_GPDI_NOINT) 
+```
+```{r}
+#Linear regression tests
+#PVS and nondurable goods
+lmPVS_NDG = lm(as.numeric(Nondurable.goods) ~ as.numeric(PVS), data = combined_data_PVS) 
+summary(lmPVS_NDG) 
+
+#try with no intercept now (X - 1)
+lmPVS_NDG_NOINT = lm(as.numeric(Nondurable.goods) ~ as.numeric(PVS) - 1, data = combined_data_PVS) 
+summary(lmPVS_NDG_NOINT) 
+```
+```{r}
+#Linear regression tests
+#PVS and personal consumption expenditures
+lmPVS_PCE = lm(as.numeric(Personal.consumption.expenditures) ~ as.numeric(PVS), data = combined_data_PVS) 
+summary(lmPVS_PCE) 
+
+#try with no intercept now (X - 1)
+lmPVS_PCE_NOINT = lm(as.numeric(Personal.consumption.expenditures) ~ as.numeric(PVS) - 1, data = combined_data_PVS) 
+summary(lmPVS_PCE_NOINT) 
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Start with PVS and GNP
+ combined_data_PVS|>
+  ggplot(aes(x = as.numeric(PVS), y = Gross.national.product,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "PVS", y = "GNP", color = "Quarter", 
+       title = "PVS vs Gross National Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and GDP
+ combined_data_PVS|>
+  ggplot(aes(x= as.numeric(PVS), y = GDP,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "PVS", y = "GDP", color = "Quarter", 
+       title = "PVS vs Gross Domestic Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and GPDI
+ combined_data_PVS|>
+  ggplot(aes(x = as.numeric(PVS), y = Gross.private.domestic.investment,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "PVS", y = "Gross private domestic investment", color = "Quarter", 
+       title = "PVS vs Gross private domestic investment by Quarter")
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and Nondurable Goods
+ combined_data_PVS|>
+  ggplot(aes(x = as.numeric(PVS), y = Nondurable.goods,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "PVS", y = "Nondurable Goods", color = "Quarter", 
+       title = "PVS vs Nondurable Goods by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and Personal consumption expenditures
+ combined_data_PVS|>
+  ggplot(aes(x = as.numeric(PVS), y = Personal.consumption.expenditures,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "PVS", y = "Personal consumption expenditures", color = "Quarter", 
+       title = "PVS vs Personal Consumption Expenditures by Quarter")
+```
