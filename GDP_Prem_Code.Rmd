@@ -1058,11 +1058,11 @@ summary(lmSCR_GNP_NOINT)
 ```{r}
 #Linear regression tests
 #Surplus Consumption Ratio and gdp
-lmSCR_GDP = lm(as.numeric(GDP) ~ IPO_Gross, data = combined_data_SCR) 
+lmSCR_GDP = lm(as.numeric(GDP) ~ SCR, data = combined_data_SCR) 
 summary(lmSCR_GDP) 
 
 #try with no intercept now (X - 1)
-lmSCR_GDP_NOINT = lm(as.numeric(GDP) ~ IPO_Gross - 1, data = combined_data_SCR) 
+lmSCR_GDP_NOINT = lm(as.numeric(GDP) ~ SCR - 1, data = combined_data_SCR) 
 summary(lmSCR_GDP_NOINT) 
 ```
 
@@ -1073,7 +1073,7 @@ lmSCR_GDPI = lm(as.numeric(Gross.private.domestic.investment) ~ SCR, data = comb
 summary(lmSCR_GDPI) 
 
 #try with no intercept now (X - 1)
-lmSCR_GDPI_NOINT = lm(as.numeric(Gross.private.domestic.investment) ~ IPO_Gross - 1, data = combined_data_SCR) 
+lmSCR_GDPI_NOINT = lm(as.numeric(Gross.private.domestic.investment) ~ SCR - 1, data = combined_data_SCR) 
 summary(lmSCR_GDPI_NOINT) 
 ```
 ```{r}
@@ -1095,4 +1095,214 @@ summary(lmSCR_PCE)
 #try with no intercept now (X - 1)
 lmSCR_PCE_NOINT = lm(as.numeric(Personal.consumption.expenditures) ~ SCR - 1, data = combined_data_SCR) 
 summary(lmSCR_PCE_NOINT) 
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Start with SCR and GNP
+ combined_data_SCR|>
+  ggplot(aes(x = SCR, y = Gross.national.product,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "SCR", y = "GNP", color = "Quarter", 
+       title = "SCR vs Gross National Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#SCR and GDP
+ combined_data_SCR|>
+  ggplot(aes(x = SCR, y = GDP,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "SCR", y = "GDP", color = "Quarter", 
+       title = "SCR vs Gross Domestic Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#SCR and GPDI
+ combined_data_SCR|> 
+  ggplot(aes(x = SCR, y = Gross.private.domestic.investment,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "SCR", y = "Gross private domestic investment", color = "Quarter", 
+       title = "SCR vs Gross private domestic investment by Quarter")
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#SCR and Nondurable Goods
+ combined_data_SCR|>
+  ggplot(aes(x = SCR, y = Nondurable.goods,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "SCR", y = "Nondurable Goods", color = "Quarter", 
+       title = "SCR vs Nondurable Goods by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#SCR and Personal consumption expenditures
+ combined_data_SCR|>
+  ggplot(aes(x = SCR, y = Personal.consumption.expenditures,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "SCR", y = "Personal consumption expenditures", color = "Quarter", 
+       title = "SCR vs Personal Consumption Expenditures by Quarter")
+```
+
+
+```{r}
+
+#Equity Premium Proxy Measure 3: Aggregate Risk Aversion, all tests and graphs below
+rm(combined_data_Agreggate_Risk_Aversion)
+
+```
+
+
+```{r}
+#Start with an anova test for Aggregate Risk Aversion
+
+#1: Anova test on the quarters to see if there is difference in the Aggregate Risk Aversion 
+#by time in the year
+
+Aggregate_Risk_Aversion.aov <- aov(Aggregate_Risk_Aversion ~ Quarter, data = combined_data_Aggregate_Risk_Aversion)
+# Summary
+summary(Aggregate_Risk_Aversion.aov)
+
+
+```
+```{r}
+#P-value of 0.963 indicates equal means approximately for risk aversion across quarters
+```
+
+```{r}
+#Run correlation tests between different GDP measures and Aggregate Risk Aversion
+#1990 to 2010
+#Correlation with GNP
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, as.numeric(combined_data_Aggregate_Risk_Aversion$Gross.national.product))
+
+#Correlation with GDP
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion,  as.numeric(combined_data_Aggregate_Risk_Aversion$GDP))
+
+#Correlation with GPDI
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, as.numeric(combined_data_Aggregate_Risk_Aversion$Gross.private.domestic.investment))
+
+#Correlation with nondurable goods
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, as.numeric(combined_data_Aggregate_Risk_Aversion$Nondurable.goods))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, as.numeric(combined_data_Aggregate_Risk_Aversion$Personal.consumption.expenditures))
+
+```
+```{r}
+# Mix of positive and negative correlations but all below 0.2 (absolute value) so relatively weak associations
+```
+
+```{r}
+#Linear regression tests
+#Start with Aggregate Risk Aversion and GNP
+lmAggregate_Risk_Aversion_GNP = lm(as.numeric(Gross.national.product) ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_GNP) 
+
+#try with no intercept now
+lmAggregate_Risk_Aversion_GNP_NOINT = lm(as.numeric(Gross.national.product) ~ Aggregate_Risk_Aversion - 1, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_GNP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#Aggregate Risk Aversion and gdp
+lmAggregate_Risk_Aversion_GDP = lm(as.numeric(GDP) ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_GDP) 
+
+#try with no intercept now (X - 1)
+lmAggregate_Risk_Aversion_GDP_NOINT = lm(as.numeric(GDP) ~ Aggregate_Risk_Aversion - 1, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_GDP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#Aggregate Risk Aversion and Gross private domestic investment
+lmAggregate_Risk_Aversion_GDP = lm(as.numeric(Gross.private.domestic.investment) ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_GDP) 
+
+#try with no intercept now (X - 1)
+lmAggregate_Risk_Aversion_GPDI_NOINT = lm(as.numeric(Gross.private.domestic.investment) ~ Aggregate_Risk_Aversion - 1, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_GPDI_NOINT) 
+```
+```{r}
+#Linear regression tests
+#gross ipo and nondurable goods
+lmAggregate_Risk_Aversion_NDG = lm(as.numeric(Nondurable.goods) ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_NDG) 
+
+#try with no intercept now (X - 1)
+lmAggregate_Risk_Aversion_NDG_NOINT = lm(as.numeric(Nondurable.goods) ~ Aggregate_Risk_Aversion - 1, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_NDG_NOINT) 
+```
+```{r}
+#Linear regression tests
+#Aggregate Risk Aversion and personal consumption expenditures
+lmAggregate_Risk_Aversion_PCE = lm(as.numeric(Personal.consumption.expenditures) ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_PCE) 
+
+#try with no intercept now (X - 1)
+lmAggregate_Risk_Aversion_PCE_NOINT = lm(as.numeric(Personal.consumption.expenditures) ~ Aggregate_Risk_Aversion - 1, data = combined_data_Aggregate_Risk_Aversion) 
+summary(lmAggregate_Risk_Aversion_PCE_NOINT) 
+```
+
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Start with Aggregate Risk Aversion  and GNP
+ combined_data_Aggregate_Risk_Aversion|>
+  ggplot(aes(x = Aggregate_Risk_Aversion, y = Gross.national.product,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Aggregate Risk Aversion ", y = "GNP", color = "Quarter", 
+       title = "Aggregate Risk Aversion  vs Gross National Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Aggregate Risk Aversion  and GDP
+ combined_data_Aggregate_Risk_Aversion|>
+  ggplot(aes(x = Aggregate_Risk_Aversion, y = GDP,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Aggregate Risk Aversion ", y = "GDP", color = "Quarter", 
+       title = "Aggregate Risk Aversion  vs Gross Domestic Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Aggregate Risk Aversion  and GPDI
+ combined_data_Aggregate_Risk_Aversion|> 
+  ggplot(aes(x = Aggregate_Risk_Aversion, y = Gross.private.domestic.investment,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Aggregate Risk Aversion ", y = "Gross private domestic investment", color = "Quarter", 
+       title = "Aggregate Risk Aversion  vs Gross private domestic investment by Quarter")
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Aggregate Risk Aversion  and Nondurable Goods
+ combined_data_Aggregate_Risk_Aversion|>
+  ggplot(aes(x = Aggregate_Risk_Aversion, y = Nondurable.goods,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Aggregate Risk Aversion ", y = "Nondurable Goods", color = "Quarter", 
+       title = "Aggregate Risk Aversion  vs Nondurable Goods by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Aggregate Risk Aversion  and Personal consumption expenditures
+ combined_data_Aggregate_Risk_Aversion|>
+  ggplot(aes(x = Aggregate_Risk_Aversion, y = Personal.consumption.expenditures,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "Aggregate Risk Aversion ", y = "Personal consumption expenditures", color = "Quarter", 
+       title = "Aggregate Risk Aversion  vs Personal Consumption Expenditures by Quarter")
 ```
