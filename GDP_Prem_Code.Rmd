@@ -196,13 +196,13 @@ ari_mean = function(months){
 
 #The 7 measures and their respective datasets:
   
-#1. IPOGross (Gross Initial Public Offering),combined_data_IPO_Gross
-#2. Aggregate , combined_data_Agreggate_Risk_Aversion
-#3. DP (Dividend Price Ratio), combined_data_DPRatio
-#4. EPBound (Equity Premium Bound), combined_data_EPBound
-#5. SCR (Surplus Consumption Ratio), combined_data_surplus
-#6. UNE (Unemployment Rate), combined_data_UNE
-#7. PVS (Price of Volatile Stocks), combined_data_PVS
+#1. IPOGross (Gross Initial Public Offering), name: combined_data_IPO_Gross
+#2. Aggregate ,  name: combined_data_Agreggate_Risk_Aversion
+#3. DP (Dividend Price Ratio),  name: combined_data_DPRatio
+#4. EPBound (Equity Premium Bound),  name: combined_data_EPBound
+#5. SCR (Surplus Consumption Ratio),  name: combined_data_surplus
+#6. UNE (Unemployment Rate),  name: combined_data_UNE
+#7. PVS (Price of Volatile Stocks),  name: combined_data_PVS
 ```
 
 
@@ -268,10 +268,10 @@ combined_data_EPBound$EPBound = geom_mean(proxy_data_cut$EP_Bound)
 ```{r}
 #Apply geom mean function to different proxy measures by quarter average and
 #add them to new, cumulative dataset with that measure for testing
-combined_data_surplus <- data.frame(gdp_data_mod_final)
+combined_data_SCR <- data.frame(gdp_data_mod_final)
 #Surplus Consumption Ratio By Quarter Added
 #negative values so use arithmetic mean
-combined_data_surplus$SCR = ari_mean(proxy_data_mod_final$Surplus_Cons_Ratio)
+combined_data_SCR$SCR = ari_mean(proxy_data_mod_final$Surplus_Cons_Ratio)
 
 ```
 
@@ -983,4 +983,116 @@ summary(lmPVS_PCE_NOINT)
   geom_point(alpha = 0.5) +
   labs(x = "PVS", y = "Personal consumption expenditures", color = "Quarter", 
        title = "PVS vs Personal Consumption Expenditures by Quarter")
+```
+```{r}
+
+#Risk Aversion Measure 2: Surplus Consumption Ratio, all tests and graphs below
+
+
+```
+
+
+```{r}
+#Start with an anova test for Surplus Consumption Ratio
+
+#1: Anova test on the quarters to see if there is difference in the Surplus Consumption Ratio
+#by time in the year
+
+SCR.aov <- aov(SCR ~ Quarter, data = combined_data_SCR)
+# Summary
+summary(SCR.aov)
+
+
+```
+```{r}
+#P-value of 0.986. Indicates that there are no significant differences in the 
+#mean SCR by quarter 
+```
+
+
+
+```{r}
+#boxplots of the quarter ~ gross ipo relationship
+#Notes: Outliers present for Q1, Q2 and Q4
+#Notes: All quarter IQR's about equal
+#Notes: No tengible oscillation between quarters
+boxplot(SCR~Quarter,data=combined_data_SCR, main="Surplus Consumption Ratio vs Yearly Quarter",
+   xlab="Quarter", ylab="SCR")
+```
+```{r}
+#Run correlation tests between different GDP measures and Surplus Consumption Ratio
+#Years: 1960 to 2015 
+#Correlation with GNP
+cor(combined_data_SCR$SCR, as.numeric(combined_data_SCR$Gross.national.product))
+
+#Correlation with GDP
+cor(combined_data_SCR$SCR,  as.numeric(combined_data_SCR$GDP))
+
+#Correlation with GPDI
+cor(combined_data_SCR$SCR, as.numeric(combined_data_SCR$Gross.private.domestic.investment))
+
+#Correlation with nondurable goods
+cor(combined_data_SCR$SCR, as.numeric(combined_data_SCR$Nondurable.goods))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_SCR$SCR, as.numeric(combined_data_SCR$Personal.consumption.expenditures))
+
+```
+
+```{r}
+#Purely negative correlations with values strictly less than 0.15 (absolute value) indicating weak, negative associations
+```
+
+```{r}
+#Linear regression tests
+#Start with Surplus Consumption Ratio and GNP
+lmSCR_GNP = lm(as.numeric(Gross.national.product) ~ SCR, data = combined_data_SCR) 
+summary(lmIPO_GNP) 
+
+#try with no intercept now
+lmSCR_GNP_NOINT = lm(as.numeric(Gross.national.product) ~ SCR - 1, data = combined_data_SCR) 
+summary(lmSCR_GNP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#Surplus Consumption Ratio and gdp
+lmSCR_GDP = lm(as.numeric(GDP) ~ IPO_Gross, data = combined_data_SCR) 
+summary(lmSCR_GDP) 
+
+#try with no intercept now (X - 1)
+lmSCR_GDP_NOINT = lm(as.numeric(GDP) ~ IPO_Gross - 1, data = combined_data_SCR) 
+summary(lmSCR_GDP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#Surplus Consumption Ratio and Gross private domestic investment
+lmSCR_GDPI = lm(as.numeric(Gross.private.domestic.investment) ~ SCR, data = combined_data_SCR) 
+summary(lmSCR_GDPI) 
+
+#try with no intercept now (X - 1)
+lmSCR_GDPI_NOINT = lm(as.numeric(Gross.private.domestic.investment) ~ IPO_Gross - 1, data = combined_data_SCR) 
+summary(lmSCR_GDPI_NOINT) 
+```
+```{r}
+#Linear regression tests
+#Surplus Consumption Ratio and nondurable goods
+lmSCR_NDG = lm(as.numeric(Nondurable.goods) ~ SCR, data = combined_data_SCR) 
+summary(lmSCR_NDG) 
+
+#try with no intercept now (X - 1)
+lmSCR_NDG_NOINT = lm(as.numeric(Nondurable.goods) ~ SCR - 1, data = combined_data_SCR) 
+summary(lmSCR_NDG_NOINT) 
+```
+```{r}
+#Linear regression tests
+#Surplus Consumption Ratio and personal consumption expenditures
+lmSCR_PCE = lm(as.numeric(Personal.consumption.expenditures) ~ SCR, data = combined_data_SCR) 
+summary(lmSCR_PCE) 
+
+#try with no intercept now (X - 1)
+lmSCR_PCE_NOINT = lm(as.numeric(Personal.consumption.expenditures) ~ SCR - 1, data = combined_data_SCR) 
+summary(lmSCR_PCE_NOINT) 
 ```
