@@ -1306,3 +1306,720 @@ summary(lmAggregate_Risk_Aversion_PCE_NOINT)
   labs(x = "Aggregate Risk Aversion ", y = "Personal consumption expenditures", color = "Quarter", 
        title = "Aggregate Risk Aversion  vs Personal Consumption Expenditures by Quarter")
 ```
+
+
+```{r}
+
+#Risk Aversion Measure 4: Unemployment Rate, all tests and graphs below
+
+
+```
+
+
+```{r}
+#Start with an anova test for Gross IPO
+
+#1: Anova test on the quarters to see if there is difference in the UNE 
+#by time in the year
+
+UNE.aov <- aov(UNE  ~ Quarter, data = combined_data_UNE )
+# Summary
+summary(UNE.aov)
+
+
+```
+```{r}
+#P-value of 1. Indicates that there are no significant differences in the 
+#mean UNE by quarter 
+```
+
+
+
+```{r}
+#boxplots of the quarter ~ UNE relationship
+#Notes: Outliers present for Q1 and Q4
+#Notes: No real potential oscillation between quarters
+boxplot(UNE ~Quarter,data=combined_data_UNE , main="UNE  vs Yearly Quarter",
+   xlab="Quarter", ylab="UNE")
+```
+
+```{r}
+#Run correlation tests between different GDP measures and UNE 
+#Years: 1960 to 2015
+#Correlation with GNP
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$Gross.national.product))
+
+#Correlation with GDP
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$GDP))
+
+#Correlation with GPDI
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$Gross.private.domestic.investment))
+
+#Correlation with nondurable goods
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$Nondurable.goods))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$Personal.consumption.expenditures))
+
+```
+
+```{r}
+#Mix of positive and negative correlations, although all less than 0.1 (absolute value)
+
+```
+
+```{r}
+#Linear regression tests
+#Start with UNE and GNP
+lmUNE_GNP = lm(as.numeric(Gross.national.product) ~ UNE, data = combined_data_UNE) 
+summary(lmUNE_GNP) 
+
+#try with no intercept now
+lmUNE_GNP_NOINT = lm(as.numeric(Gross.national.product) ~ UNE - 1, data = combined_data_UNE) 
+summary(lmUNE_GNP_NOINT) 
+```
+
+```{r}
+#Linear regression tests
+#UNE and gdp
+lmUNE_GDP = lm(as.numeric(GDP) ~ UNE, data = combined_data_UNE) 
+summary(lmEPBound_GDP) 
+
+#try with no intercept now (X - 1)
+lmUNE_GDP_NOINT = lm(as.numeric(GDP) ~ UNE - 1, data = combined_data_UNE) 
+summary(lmUNE_GDP_NOINT) 
+```
+
+
+```{r}
+#Linear regression tests 
+#UNE and Gross private domestic investment
+lmUNE_GDP = lm(as.numeric(Gross.private.domestic.investment) ~ UNE, data = combined_data_UNE) 
+summary(lmUNE_GDP) 
+
+#try with no intercept now (X - 1)
+lmUNE_GPDI_NOINT = lm(as.numeric(Gross.private.domestic.investment) ~ UNE - 1, data = combined_data_UNE) 
+summary(lmUNE_GPDI_NOINT) 
+```
+```{r}
+#Linear regression tests
+#UNE and nondurable goods
+lmUNE_NDG = lm(as.numeric(Nondurable.goods) ~ UNE, data = combined_data_UNE) 
+summary(lmUNE_NDG) 
+
+#try with no intercept now (X - 1)
+lmUNE_NDG_NOINT = lm(as.numeric(Nondurable.goods) ~ UNE - 1, data = combined_data_UNE) 
+summary(lmUNE_NDG_NOINT) 
+```
+```{r}
+#Linear regression tests
+#UNE and personal consumption expenditures
+lmUNE_PCE = lm(as.numeric(Personal.consumption.expenditures) ~ UNE, data = combined_data_UNE) 
+summary(lmUNE_PCE) 
+
+#try with no intercept now (X - 1)
+lmUNE_PCE_NOINT = lm(as.numeric(Personal.consumption.expenditures) ~ UNE - 1, data = combined_data_UNE) 
+summary(lmUNE_PCE_NOINT) 
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#Start with UNE and GNP
+ combined_data_UNE|>
+  ggplot(aes(x = as.numeric(UNE), y = Gross.national.product,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "UNE", y = "GNP", color = "Quarter", 
+       title = "UNE vs Gross National Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#IPO Gross and GDP
+ combined_data_UNE|>
+  ggplot(aes(x= as.numeric(UNE), y = GDP,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "UNE", y = "GDP", color = "Quarter", 
+       title = "UNE vs Gross Domestic Product by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#UNE and GPDI
+ combined_data_UNE|>
+  ggplot(aes(x = as.numeric(UNE), y = Gross.private.domestic.investment,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "UNE", y = "Gross private domestic investment", color = "Quarter", 
+       title = "UNE vs Gross private domestic investment by Quarter")
+```
+```{r}
+#Make scatterplots of relationships, color by quarter
+#UNE and Nondurable Goods
+ combined_data_UNE|>
+  ggplot(aes(x = as.numeric(UNE), y = Nondurable.goods,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "UNE", y = "Nondurable Goods", color = "Quarter", 
+       title = "UNE vs Nondurable Goods by Quarter")
+```
+
+```{r}
+#Make scatterplots of relationships, color by quarter
+#UNE and Personal consumption expenditures
+ combined_data_UNE|>
+  ggplot(aes(x = as.numeric(UNE), y = Personal.consumption.expenditures,
+             color = Quarter)) +
+  geom_point(alpha = 0.5) +
+  labs(x = "UNE", y = "Personal consumption expenditures", color = "Quarter", 
+       title = "UNE vs Personal Consumption Expenditures by Quarter")
+```
+
+```{r}
+#check how to get fitted values
+lmIPO_GDP$fitted.values
+
+```
+
+```{r}
+library(tidyverse)
+#importing the new dataset with recession data by month
+USREC_data <- read_csv("USREC.csv")
+```
+
+```{r}
+#Start by changing the recession data to only include 1960 to 2015 
+USREC_data_mod <- data.frame(USREC_data)
+USREC_data_mod <- USREC_data_mod[-c(1934: 2033), ]
+USREC_data_mod <- USREC_data_mod[-c(1: 1261), ]
+```
+
+
+```{r}
+#adjust recession data by quarter
+
+
+#0 is expansionary, 1 is recessionary
+#adjust by quarter, Y = recession, N = no recession
+quarter_rec = function(months){
+  result <- c()
+  i = 1
+  while(i < length(months)) {
+      len_result <- length(result)
+      if (months[i] == 0 & months[i + 1] == 0 &  months[i + 2] == 0) {
+        result[[len_result + 1]] <- "N"
+      }
+      else {
+          result[[len_result + 1]] <- "Y"
+      }
+    i = i + 3
+  }
+  return (result)
+}
+
+#store in vector called quarter_recession
+quarter_recession = quarter_rec(USREC_data_mod$USREC)
+
+```
+
+
+
+```{r}
+#add this new column of recession data to the individual datasets
+gdp_data_mod_final$recession = quarter_recession
+combined_data_DPRatio$recession = quarter_recession
+combined_data_IPO_Gross$recession = quarter_recession
+combined_data_SCR$recession = quarter_recession
+combined_data_UNE$recession = quarter_recession
+#adjust to 1990 to 2010 for aggregate risk aversion dataset
+quarter_recession_ARE <- c() 
+for (i in 1:84){
+quarter_recession_ARE[i] = gdp_data_mod_final$recession[i + 120]
+}
+combined_data_Aggregate_Risk_Aversion$recession = quarter_recession_ARE
+
+#adjust to 1996 to 2011 for Equity Premium Bound dataset
+quarter_recession_EP <- c() 
+for (i in 1:64){
+quarter_recession_EP[i] = gdp_data_mod_final$recession[i + 144]
+}
+combined_data_EPBound$recession = quarter_recession_EP
+
+#adjust to 1970 to 2015 for Equity Premium Bound dataset
+quarter_recession_PVS <- c() 
+for (i in 1:183){
+quarter_recession_PVS[i] = gdp_data_mod_final$recession[i + 40]
+}
+combined_data_PVS$recession = quarter_recession_PVS
+
+#all individual datasets now have recession data per quarter
+```
+
+
+```{r}
+#Run tests of equal variancefor each dataset measure by recession
+```
+
+
+
+```{r}
+#Equal variance test by recession for gross_ipo  
+
+#check normality first
+qqnorm(combined_data_IPO_Gross$IPO_Gross, pch = 1, frame = FALSE)
+qqline(combined_data_IPO_Gross$IPO_Gross, col = "blue", lwd = 2)
+#shows a mostly normal distribution with heavy tails 
+#RunF-test to compare variances
+ftest_IPO_Gross <- var.test(IPO_Gross ~ as.character(recession), data = combined_data_IPO_Gross)
+ftest_IPO_Gross
+#reject
+```
+
+```{r}
+#Equal variance test by recession for dp_ratio  
+
+#check normality first
+qqnorm(combined_data_DPRatio$DPRatio, pch = 1, frame = FALSE)
+qqline(combined_data_DPRatio$DPRatio, col = "blue", lwd = 2)
+#Approximately normal distribution 
+#RunF-test to compare variances
+ftest_DPRatio <- var.test(DPRatio ~ as.character(recession), data = combined_data_DPRatio)
+ftest_DPRatio
+#fail to reject
+```
+
+```{r}
+#Equal variance test by recession for EPBound  
+
+#check normality first
+qqnorm(combined_data_EPBound$EPBound, pch = 1, frame = FALSE)
+qqline(combined_data_EPBound$EPBound, col = "blue", lwd = 2)
+#shows an approximately, mostly normal distribution 
+#Run F-test to compare variances
+ftest_EPBound <- var.test(EPBound ~ as.character(recession), data = combined_data_EPBound)
+ftest_EPBound
+#reject
+```
+
+
+```{r}
+#Equal variance test by recession for Aggregate Risk Aversion  
+
+#check normality first
+qqnorm(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, pch = 1, frame = FALSE)
+qqline(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, col = "blue", lwd = 2)
+#shows an approximately, mostly normal distribution 
+#Run F-test to compare variances
+ftest_Aggregate_Risk_Aversion <- var.test(Aggregate_Risk_Aversion ~ as.character(recession), data = combined_data_Aggregate_Risk_Aversion)
+ftest_Aggregate_Risk_Aversion
+#reject
+```
+
+```{r}
+#Equal variance test by recession for Price of Volatile Stocks
+
+#check normality first
+qqnorm(as.numeric(combined_data_PVS$PVS), pch = 1, frame = FALSE)
+qqline(as.numeric(combined_data_PVS$PVS), col = "blue", lwd = 2)
+#shows an approximately, mostly normal distribution 
+#Run F-test to compare variances
+ftest_Aggregate_PVS<- var.test(as.numeric(PVS) ~ as.character(recession), data = combined_data_PVS)
+ftest_Aggregate_PVS
+#reject
+```
+
+```{r}
+#Equal variance test by recession for Surplus Consumption Ratio  
+
+#check normality first
+qqnorm(combined_data_SCR$SCR, pch = 1, frame = FALSE)
+qqline(combined_data_SCR$SCR, col = "blue", lwd = 2)
+#shows an approximately, mostly normal distribution 
+#Run F-test to compare variances
+ftest_SCR <- var.test(SCR ~ as.character(recession), data = combined_data_SCR)
+ftest_SCR
+#reject
+```
+
+```{r}
+#Equal variance test by recession for Unemployment Rate
+#check normality first
+qqnorm(combined_data_UNE$UNE, pch = 1, frame = FALSE)
+qqline(combined_data_UNE$UNE, col = "blue", lwd = 2)
+#shows an approximately, mostly normal distribution 
+#Run F-test to compare variances
+ftest_UNE <- var.test(UNE ~ as.character(recession), data = combined_data_UNE)
+ftest_UNE
+#reject
+```
+```{r}
+#run tests for Heteroscedasticity
+#Use Breusch-Pagan Test
+
+
+#Start with Gross Ipo and GDP
+IPO_Gross_GDP_lm <- lm(GDP ~ IPO_Gross, data = combined_data_IPO_Gross)
+combined_data_IPO_Gross$GDP_resi <- IPO_Gross_GDP_lm$residuals
+IPO_Gross_GDP.func <- lm(GDP_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
+summary(IPO_Gross_GDP.func)
+
+#Gross IPO and GNP
+IPO_Gross_Gross.national.product_lm <- lm(Gross.national.product ~ IPO_Gross, data = combined_data_IPO_Gross)
+combined_data_IPO_Gross$Gross.national.product_resi <- IPO_Gross_Gross.national.product_lm$residuals
+IPO_Gross_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
+summary(IPO_Gross_Gross.national.product.func)
+
+#Gross IPO and Nondurable goods
+IPO_Gross_Nondurable.goods_lm <- lm(Nondurable.goods ~ IPO_Gross, data = combined_data_IPO_Gross)
+combined_data_IPO_Gross$Nondurable.goods_resi <- IPO_Gross_Nondurable.goods_lm$residuals
+IPO_Gross_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
+summary(IPO_Gross_Nondurable.goods.func)
+
+
+#Gross IPO and Gross private domestic investment
+IPO_Gross_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ IPO_Gross, data = combined_data_IPO_Gross)
+combined_data_IPO_Gross$Gross.private.domestic.investment_resi <- IPO_Gross_Gross.private.domestic.investment_lm$residuals
+IPO_Gross_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
+summary(IPO_Gross_Gross.private.domestic.investment.func)
+
+
+#Gross IPO and Personal consumption expenditure
+IPO_Gross_Personal.consumption.expenditures_lm <- lm(
+Personal.consumption.expenditures ~ IPO_Gross, data = combined_data_IPO_Gross)
+combined_data_IPO_Gross$Personal.consumption.expenditures_resi <- IPO_Gross_Personal.consumption.expenditures_lm$residuals
+IPO_Gross_Personal.consumption.expenditures.func <- lm(
+Personal.consumption.expenditures_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
+summary(IPO_Gross_Personal.consumption.expenditures.func)
+
+```
+
+```{r}
+#Start with DPRatio and GDP
+DPRatio_GDP_lm <- lm(GDP ~ DPRatio, data = combined_data_DPRatio)
+combined_data_DPRatio$GDP_resi <- DPRatio_GDP_lm$residuals
+DPRatio_GDP.func <- lm(GDP_resi^2 ~ DPRatio, data = combined_data_DPRatio)
+summary(DPRatio_GDP.func)
+
+#DPRatio and GNP
+DPRatio_Gross.national.product_lm <- lm(Gross.national.product ~ DPRatio, data = combined_data_DPRatio)
+combined_data_DPRatio$Gross.national.product_resi <- DPRatio_Gross.national.product_lm$residuals
+DPRatio_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ DPRatio, data = combined_data_DPRatio)
+summary(DPRatio_Gross.national.product.func)
+
+#DPRatio and Nondurable goods
+DPRatio_Nondurable.goods_lm <- lm(Nondurable.goods ~ DPRatio, data = combined_data_DPRatio)
+combined_data_DPRatio$Nondurable.goods_resi <- DPRatio_Nondurable.goods_lm$residuals
+DPRatio_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ DPRatio, data = combined_data_DPRatio)
+summary(DPRatio_Nondurable.goods.func)
+
+
+#DPRatio and Gross private domestic investment
+DPRatio_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ DPRatio, data = combined_data_DPRatio)
+combined_data_DPRatio$Gross.private.domestic.investment_resi <- DPRatio_Gross.private.domestic.investment_lm$residuals
+DPRatio_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ DPRatio, data = combined_data_DPRatio)
+summary(DPRatio_Gross.private.domestic.investment.func)
+
+
+#DPRatio and Personal consumption expenditure
+DPRatio_Personal.consumption.expenditures_lm <- lm(
+Personal.consumption.expenditures ~ DPRatio, data = combined_data_DPRatio)
+combined_data_DPRatio$Personal.consumption.expenditures_resi <- DPRatio_Personal.consumption.expenditures_lm$residuals
+DPRatio_Personal.consumption.expenditures.func <- lm(
+Personal.consumption.expenditures_resi^2 ~ DPRatio, data = combined_data_DPRatio)
+summary(DPRatio_Personal.consumption.expenditures.func)
+
+```
+
+
+```{r}
+#Start with EPBound and GDP
+EPBound_GDP_lm <- lm(GDP ~ EPBound, data = combined_data_EPBound)
+combined_data_EPBound$GDP_resi <- EPBound_GDP_lm$residuals
+EPBound_GDP.func <- lm(GDP_resi^2 ~ EPBound, data = combined_data_EPBound)
+summary(EPBound_GDP.func)
+
+#EPBound and GNP
+EPBound_Gross.national.product_lm <- lm(Gross.national.product ~ EPBound, data = combined_data_EPBound)
+combined_data_EPBound$Gross.national.product_resi <- EPBound_Gross.national.product_lm$residuals
+EPBound_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ EPBound, data = combined_data_EPBound)
+summary(EPBound_Gross.national.product.func)
+
+#EPBound and Nondurable goods
+EPBound_Nondurable.goods_lm <- lm(Nondurable.goods ~ EPBound, data = combined_data_EPBound)
+combined_data_EPBound$Nondurable.goods_resi <- EPBound_Nondurable.goods_lm$residuals
+EPBound_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ EPBound, data = combined_data_EPBound)
+summary(EPBound_Nondurable.goods.func)
+
+
+#EPBound and Gross private domestic investment
+EPBound_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ EPBound, data = combined_data_EPBound)
+combined_data_EPBound$Gross.private.domestic.investment_resi <- EPBound_Gross.private.domestic.investment_lm$residuals
+EPBound_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ EPBound, data = combined_data_EPBound)
+summary(EPBound_Gross.private.domestic.investment.func)
+
+
+#EPBound and Personal consumption expenditure
+EPBound_Personal.consumption.expenditures_lm <- lm(
+Personal.consumption.expenditures ~ EPBound, data = combined_data_EPBound)
+combined_data_EPBound$Personal.consumption.expenditures_resi <- EPBound_Personal.consumption.expenditures_lm$residuals
+EPBound_Personal.consumption.expenditures.func <- lm(
+Personal.consumption.expenditures_resi^2 ~ EPBound, data = combined_data_EPBound)
+summary(EPBound_Personal.consumption.expenditures.func)
+
+```
+
+
+```{r}
+#Start with PVS and GDP
+PVS_GDP_lm <- lm(GDP ~ as.numeric(PVS), data = combined_data_PVS)
+combined_data_PVS$GDP_resi <- PVS_GDP_lm$residuals
+PVS_GDP.func <- lm(GDP_resi^2 ~ as.numeric(PVS), data = combined_data_PVS)
+summary(PVS_GDP.func)
+
+#PVS and GNP
+PVS_Gross.national.product_lm <- lm(Gross.national.product ~ as.numeric(PVS), data = combined_data_PVS)
+combined_data_PVS$Gross.national.product_resi <- PVS_Gross.national.product_lm$residuals
+PVS_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ as.numeric(PVS), data = combined_data_PVS)
+summary(PVS_Gross.national.product.func)
+
+#PVS and Nondurable goods
+PVS_Nondurable.goods_lm <- lm(Nondurable.goods ~ as.numeric(PVS), data = combined_data_PVS)
+combined_data_PVS$Nondurable.goods_resi <- PVS_Nondurable.goods_lm$residuals
+PVS_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ as.numeric(PVS), data = combined_data_PVS)
+summary(PVS_Nondurable.goods.func)
+
+
+#EPBound and Gross private domestic investment
+PVS_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ as.numeric(PVS), data = combined_data_PVS)
+combined_data_PVS$Gross.private.domestic.investment_resi <- PVS_Gross.private.domestic.investment_lm$residuals
+PVS_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ as.numeric(PVS), data = combined_data_PVS)
+summary(PVS_Gross.private.domestic.investment.func)
+
+
+#EPBound and Personal consumption expenditure
+PVS_Personal.consumption.expenditures_lm <- lm(
+Personal.consumption.expenditures ~ as.numeric(PVS), data = combined_data_PVS)
+combined_data_PVS$Personal.consumption.expenditures_resi <- PVS_Personal.consumption.expenditures_lm$residuals
+PVS_Personal.consumption.expenditures.func <- lm(
+Personal.consumption.expenditures_resi^2 ~ as.numeric(PVS), data = combined_data_PVS)
+summary(PVS_Personal.consumption.expenditures.func)
+
+```
+
+```{r}
+#Start with SCR and GDP
+SCR_GDP_lm <- lm(GDP ~ as.numeric(SCR), data = combined_data_SCR)
+combined_data_SCR$GDP_resi <- SCR_GDP_lm$residuals
+SCR_GDP.func <- lm(GDP_resi^2 ~ as.numeric(SCR), data = combined_data_SCR)
+summary(SCR_GDP.func)
+
+#SCR and GNP
+SCR_Gross.national.product_lm <- lm(Gross.national.product ~ as.numeric(SCR), data = combined_data_SCR)
+combined_data_SCR$Gross.national.product_resi <- SCR_Gross.national.product_lm$residuals
+SCR_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ as.numeric(SCR), data = combined_data_SCR)
+summary(SCR_Gross.national.product.func)
+
+#SCR and Nondurable goods
+SCR_Nondurable.goods_lm <- lm(Nondurable.goods ~ as.numeric(SCR), data = combined_data_SCR)
+combined_data_SCR$Nondurable.goods_resi <- SCR_Nondurable.goods_lm$residuals
+SCR_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ as.numeric(SCR), data = combined_data_SCR)
+summary(SCR_Nondurable.goods.func)
+
+
+#SCR and Gross private domestic investment
+SCR_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ as.numeric(SCR), data = combined_data_SCR)
+combined_data_SCR$Gross.private.domestic.investment_resi <- SCR_Gross.private.domestic.investment_lm$residuals
+SCR_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ as.numeric(SCR), data = combined_data_SCR)
+summary(SCR_Gross.private.domestic.investment.func)
+
+
+#SCR and Personal consumption expenditure
+SCR_Personal.consumption.expenditures_lm <- lm(
+Personal.consumption.expenditures ~ as.numeric(SCR), data = combined_data_SCR)
+combined_data_SCR$Personal.consumption.expenditures_resi <- SCR_Personal.consumption.expenditures_lm$residuals
+SCR_Personal.consumption.expenditures.func <- lm(
+Personal.consumption.expenditures_resi^2 ~ as.numeric(SCR), data = combined_data_SCR)
+summary(SCR_Personal.consumption.expenditures.func)
+
+```
+
+```{r}
+#Start with Aggregate Risk Aversion and GDP
+Aggregate_Risk_Aversion_GDP_lm <- lm(GDP ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+combined_data_Aggregate_Risk_Aversion$GDP_resi <- Aggregate_Risk_Aversion_GDP_lm$residuals
+Aggregate_Risk_Aversion_GDP.func <- lm(GDP_resi^2 ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+summary(Aggregate_Risk_Aversion_GDP.func)
+
+#Aggregate Risk Aversion and GNP
+Aggregate_Risk_Aversion_Gross.national.product_lm <- lm(Gross.national.product ~ 
+Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+combined_data_Aggregate_Risk_Aversion$Gross.national.product_resi <- Aggregate_Risk_Aversion_Gross.national.product_lm$residuals
+Aggregate_Risk_Aversion_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+summary(Aggregate_Risk_Aversion_Gross.national.product.func)
+
+#Aggregate Risk Aversion and Nondurable goods
+Aggregate_Risk_Aversion_Nondurable.goods_lm <- lm(Nondurable.goods ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+combined_data_Aggregate_Risk_Aversion$Nondurable.goods_resi <- Aggregate_Risk_Aversion_Nondurable.goods_lm$residuals
+Aggregate_Risk_Aversion_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+summary(Aggregate_Risk_Aversion_Nondurable.goods.func)
+
+
+#Aggregate Risk Aversion and Gross private domestic investment
+Aggregate_Risk_Aversion_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+combined_data_Aggregate_Risk_Aversion$Gross.private.domestic.investment_resi <- Aggregate_Risk_Aversion_Gross.private.domestic.investment_lm$residuals
+Aggregate_Risk_Aversion_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+summary(Aggregate_Risk_Aversion_Gross.private.domestic.investment.func)
+
+
+#Aggregate Risk Aversion and Personal consumption expenditure
+Aggregate_Risk_Aversion_Personal.consumption.expenditures_lm <- lm(
+Personal.consumption.expenditures ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+combined_data_Aggregate_Risk_Aversion$Personal.consumption.expenditures_resi <- Aggregate_Risk_Aversion_Personal.consumption.expenditures_lm$residuals
+Aggregate_Risk_Aversion_Personal.consumption.expenditures.func <- lm(
+Personal.consumption.expenditures_resi^2 ~ Aggregate_Risk_Aversion, data = combined_data_Aggregate_Risk_Aversion)
+summary(Aggregate_Risk_Aversion_Personal.consumption.expenditures.func)
+
+```
+```{r}
+#Start with UNE and GDP
+UNE_GDP_lm <- lm(GDP ~ UNE, data = combined_data_UNE)
+combined_data_UNE$GDP_resi <- UNE_GDP_lm$residuals
+UNE_GDP.func <- lm(GDP_resi^2 ~ UNE, data = combined_data_UNE)
+summary(UNE_GDP.func)
+
+#UNE and GNP
+UNE_Gross.national.product_lm <- lm(Gross.national.product ~ UNE, data = combined_data_UNE)
+combined_data_UNE$Gross.national.product_resi <- UNE_Gross.national.product_lm$residuals
+UNE_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ UNE, data = combined_data_UNE)
+summary(UNE_Gross.national.product.func)
+
+#UNE and Nondurable goods
+UNE_Nondurable.goods_lm <- lm(Nondurable.goods ~ UNE, data = combined_data_UNE)
+combined_data_UNE$Nondurable.goods_resi <- UNE_Nondurable.goods_lm$residuals
+UNE_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ UNE, data = combined_data_UNE)
+summary(UNE_Nondurable.goods.func)
+
+
+#UNE and Gross private domestic investment
+UNE_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ UNE, data = combined_data_UNE)
+combined_data_UNE$Gross.private.domestic.investment_resi <- UNE_Gross.private.domestic.investment_lm$residuals
+UNE_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ UNE, data = combined_data_UNE)
+summary(UNE_Gross.private.domestic.investment.func)
+
+
+#UNE and Personal consumption expenditure
+UNE_Personal.consumption.expenditures_lm <- lm(
+Personal.consumption.expenditures ~ UNE, data = combined_data_UNE)
+combined_data_UNE$Personal.consumption.expenditures_resi <- UNE_Personal.consumption.expenditures_lm$residuals
+UNE_Personal.consumption.expenditures.func <- lm(
+Personal.consumption.expenditures_resi^2 ~ UNE, data = combined_data_UNE)
+summary(UNE_Personal.consumption.expenditures.func)
+
+```
+
+
+
+
+
+
+```{r}
+#combined_data_IPO_Gross$Year = as.integer(unlist(combined_data_IPO_Gross$Year))
+#line plot of gross_ipo by recession over time
+#ggplot(data=combined_data_IPO_Gross, aes(x= Year, y= IPO_Gross, group= recession)) +
+  #geom_line(linetype="dashed", color="red", size=1.4)+
+  #geom_point(color="green", size=5)
+```
+
+
+```{r}
+#create function for growth rates for different output measures 
+growth_rate = function(months){
+  total <- c()
+  total[1] = 0
+  i = 1
+  while(i < length(months)) {
+      len_total <- length(total)
+      #calculate growth rate
+      if (months[i] == 0) {
+        #??? what to do
+        #for now just set to 0
+        total[[len_total + 1]] = 0
+      }
+      
+      else {
+        total[[len_total + 1]] <- (months[i + 1] - months[i]) / months[i]
+      }
+    i = i + 1
+  }
+  return (as.numeric(total))
+}
+```
+
+
+```{r}
+#run growth rate function on gdp measures in each dataset
+#Start with IPO Gross
+combined_data_IPO_Gross$GDP_growth = growth_rate(as.numeric(combined_data_IPO_Gross$GDP))
+combined_data_IPO_Gross$Personal.consumption.expenditures_growth = growth_rate(as.numeric(combined_data_IPO_Gross$Personal.consumption.expenditures))
+combined_data_IPO_Gross$Gross.national.product_growth = growth_rate(as.numeric(combined_data_IPO_Gross$Gross.national.product))
+combined_data_IPO_Gross$Nondurable.goods_growth = growth_rate(as.numeric(combined_data_IPO_Gross$Nondurable.goods))
+combined_data_IPO_Gross$Gross.private.domestic.investment_growth = growth_rate(as.numeric(combined_data_IPO_Gross$Gross.private.domestic.investment))
+
+#DPRatio Growth Adjustments
+combined_data_DPRatio$GDP_growth = growth_rate(as.numeric(combined_data_DPRatio$GDP))
+combined_data_DPRatio$Personal.consumption.expenditures_growth = growth_rate(as.numeric(combined_data_DPRatio$Personal.consumption.expenditures))
+combined_data_DPRatio$Gross.national.product_growth = growth_rate(as.numeric(combined_data_DPRatio$Gross.national.product))
+combined_data_DPRatio$Nondurable.goods_growth = growth_rate(as.numeric(combined_data_DPRatio$Nondurable.goods))
+combined_data_DPRatio$Gross.private.domestic.investment_growth = growth_rate(as.numeric(combined_data_DPRatio$Gross.private.domestic.investment))
+
+
+#EPBound Growth Adjustments
+combined_data_EPBound$GDP_growth = growth_rate(as.numeric(combined_data_EPBound$GDP))
+combined_data_EPBound$Personal.consumption.expenditures_growth = growth_rate(as.numeric(combined_data_EPBound$Personal.consumption.expenditures))
+combined_data_EPBound$Gross.national.product_growth = growth_rate(as.numeric(combined_data_EPBound$Gross.national.product))
+combined_data_EPBound$Nondurable.goods_growth = growth_rate(as.numeric(combined_data_EPBound$Nondurable.goods))
+combined_data_EPBound$Gross.private.domestic.investment_growth = growth_rate(as.numeric(combined_data_EPBound$Gross.private.domestic.investment))
+
+
+#Price of Volatile Stocks Growth Adjustments
+combined_data_PVS$GDP_growth = growth_rate(as.numeric(combined_data_PVS$GDP))
+combined_data_PVS$Personal.consumption.expenditures_growth = growth_rate(as.numeric(combined_data_PVS$Personal.consumption.expenditures))
+combined_data_PVS$Gross.national.product_growth = growth_rate(as.numeric(combined_data_PVS$Gross.national.product))
+combined_data_PVS$Nondurable.goods_growth = growth_rate(as.numeric(combined_data_PVS$Nondurable.goods))
+combined_data_PVS$Gross.private.domestic.investment_growth = growth_rate(as.numeric(combined_data_PVS$Gross.private.domestic.investment))
+
+#Surplus Consumption Ratio Growth Adjustments
+combined_data_SCR$GDP_growth = growth_rate(as.numeric(combined_data_SCR$GDP))
+combined_data_SCR$Personal.consumption.expenditures_growth = growth_rate(as.numeric(combined_data_SCR$Personal.consumption.expenditures))
+combined_data_SCR$Gross.national.product_growth = growth_rate(as.numeric(combined_data_SCR$Gross.national.product))
+combined_data_SCR$Nondurable.goods_growth = growth_rate(as.numeric(combined_data_SCR$Nondurable.goods))
+combined_data_SCR$Gross.private.domestic.investment_growth = growth_rate(as.numeric(combined_data_SCR$Gross.private.domestic.investment))
+
+#Aggregate Risk Aversion Growth Adjustments
+combined_data_Aggregate_Risk_Aversion$GDP_growth = growth_rate(as.numeric(combined_data_Aggregate_Risk_Aversion$GDP))
+combined_data_Aggregate_Risk_Aversion$Personal.consumption.expenditures_growth = growth_rate(as.numeric(combined_data_Aggregate_Risk_Aversion$Personal.consumption.expenditures))
+combined_data_Aggregate_Risk_Aversion$Gross.national.product_growth = growth_rate(as.numeric(combined_data_Aggregate_Risk_Aversion$Gross.national.product))
+combined_data_Aggregate_Risk_Aversion$Nondurable.goods_growth = growth_rate(as.numeric(combined_data_Aggregate_Risk_Aversion$Nondurable.goods))
+combined_data_Aggregate_Risk_Aversion$Gross.private.domestic.investment_growth = growth_rate(as.numeric(combined_data_Aggregate_Risk_Aversion$Gross.private.domestic.investment))
+
+#Unemployment Rate Growth Adjustments 
+combined_data_UNE$GDP_growth = growth_rate(as.numeric(combined_data_UNE$GDP))
+combined_data_UNE$Personal.consumption.expenditures_growth = growth_rate(as.numeric(combined_data_UNE$Personal.consumption.expenditures))
+combined_data_UNE$Gross.national.product_growth = growth_rate(as.numeric(combined_data_UNE$Gross.national.product))
+combined_data_UNE$Nondurable.goods_growth = growth_rate(as.numeric(combined_data_UNE$Nondurable.goods))
+combined_data_UNE$Gross.private.domestic.investment_growth = growth_rate(as.numeric(combined_data_UNE$Gross.private.domestic.investment))
+
+```
+
+
+
+```{r}
+#Look at graphs of these growth rates versus the various equity premium/risk aversion measures
+
+
+```
+
+
+
+
