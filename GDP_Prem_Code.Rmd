@@ -1659,26 +1659,26 @@ ftest_UNE
 
 
 #Start with Gross Ipo and GDP
-IPO_Gross_GDP_lm <- lm(GDP ~ IPO_Gross, data = combined_data_IPO_Gross)
+IPO_Gross_GDP_lm <- lm(as.numeric(GDP) ~ IPO_Gross, data = combined_data_IPO_Gross)
 combined_data_IPO_Gross$GDP_resi <- IPO_Gross_GDP_lm$residuals
 IPO_Gross_GDP.func <- lm(GDP_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
 summary(IPO_Gross_GDP.func)
 
 #Gross IPO and GNP
-IPO_Gross_Gross.national.product_lm <- lm(Gross.national.product ~ IPO_Gross, data = combined_data_IPO_Gross)
+IPO_Gross_Gross.national.product_lm <- lm(as.numeric(Gross.national.product) ~ IPO_Gross, data = combined_data_IPO_Gross)
 combined_data_IPO_Gross$Gross.national.product_resi <- IPO_Gross_Gross.national.product_lm$residuals
 IPO_Gross_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
 summary(IPO_Gross_Gross.national.product.func)
 
 #Gross IPO and Nondurable goods
-IPO_Gross_Nondurable.goods_lm <- lm(Nondurable.goods ~ IPO_Gross, data = combined_data_IPO_Gross)
+IPO_Gross_Nondurable.goods_lm <- lm(as.numeric(Nondurable.goods) ~ IPO_Gross, data = combined_data_IPO_Gross)
 combined_data_IPO_Gross$Nondurable.goods_resi <- IPO_Gross_Nondurable.goods_lm$residuals
 IPO_Gross_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
 summary(IPO_Gross_Nondurable.goods.func)
 
 
 #Gross IPO and Gross private domestic investment
-IPO_Gross_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ IPO_Gross, data = combined_data_IPO_Gross)
+IPO_Gross_Gross.private.domestic.investment_lm <- lm(as.numeric(Gross.private.domestic.investment) ~ IPO_Gross, data = combined_data_IPO_Gross)
 combined_data_IPO_Gross$Gross.private.domestic.investment_resi <- IPO_Gross_Gross.private.domestic.investment_lm$residuals
 IPO_Gross_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
 summary(IPO_Gross_Gross.private.domestic.investment.func)
@@ -1686,7 +1686,7 @@ summary(IPO_Gross_Gross.private.domestic.investment.func)
 
 #Gross IPO and Personal consumption expenditure
 IPO_Gross_Personal.consumption.expenditures_lm <- lm(
-Personal.consumption.expenditures ~ IPO_Gross, data = combined_data_IPO_Gross)
+as.numeric(Personal.consumption.expenditures) ~ IPO_Gross, data = combined_data_IPO_Gross)
 combined_data_IPO_Gross$Personal.consumption.expenditures_resi <- IPO_Gross_Personal.consumption.expenditures_lm$residuals
 IPO_Gross_Personal.consumption.expenditures.func <- lm(
 Personal.consumption.expenditures_resi^2 ~ IPO_Gross, data = combined_data_IPO_Gross)
@@ -1696,26 +1696,26 @@ summary(IPO_Gross_Personal.consumption.expenditures.func)
 
 ```{r}
 #Start with DPRatio and GDP
-DPRatio_GDP_lm <- lm(GDP ~ DPRatio, data = combined_data_DPRatio)
+DPRatio_GDP_lm <- lm(as.numeric(GDP) ~ DPRatio, data = combined_data_DPRatio)
 combined_data_DPRatio$GDP_resi <- DPRatio_GDP_lm$residuals
 DPRatio_GDP.func <- lm(GDP_resi^2 ~ DPRatio, data = combined_data_DPRatio)
 summary(DPRatio_GDP.func)
 
 #DPRatio and GNP
-DPRatio_Gross.national.product_lm <- lm(Gross.national.product ~ DPRatio, data = combined_data_DPRatio)
+DPRatio_Gross.national.product_lm <- lm(as.numeric(Gross.national.product) ~ DPRatio, data = combined_data_DPRatio)
 combined_data_DPRatio$Gross.national.product_resi <- DPRatio_Gross.national.product_lm$residuals
 DPRatio_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ DPRatio, data = combined_data_DPRatio)
 summary(DPRatio_Gross.national.product.func)
 
 #DPRatio and Nondurable goods
-DPRatio_Nondurable.goods_lm <- lm(Nondurable.goods ~ DPRatio, data = combined_data_DPRatio)
+DPRatio_Nondurable.goods_lm <- lm(as.numeric(Nondurable.goods) ~ DPRatio, data = combined_data_DPRatio)
 combined_data_DPRatio$Nondurable.goods_resi <- DPRatio_Nondurable.goods_lm$residuals
 DPRatio_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ DPRatio, data = combined_data_DPRatio)
 summary(DPRatio_Nondurable.goods.func)
 
 
 #DPRatio and Gross private domestic investment
-DPRatio_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ DPRatio, data = combined_data_DPRatio)
+DPRatio_Gross.private.domestic.investment_lm <- lm(as.numeric(Gross.private.domestic.investment) ~ DPRatio, data = combined_data_DPRatio)
 combined_data_DPRatio$Gross.private.domestic.investment_resi <- DPRatio_Gross.private.domestic.investment_lm$residuals
 DPRatio_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ DPRatio, data = combined_data_DPRatio)
 summary(DPRatio_Gross.private.domestic.investment.func)
@@ -1723,7 +1723,7 @@ summary(DPRatio_Gross.private.domestic.investment.func)
 
 #DPRatio and Personal consumption expenditure
 DPRatio_Personal.consumption.expenditures_lm <- lm(
-Personal.consumption.expenditures ~ DPRatio, data = combined_data_DPRatio)
+as.numeric(Personal.consumption.expenditures) ~ DPRatio, data = combined_data_DPRatio)
 combined_data_DPRatio$Personal.consumption.expenditures_resi <- DPRatio_Personal.consumption.expenditures_lm$residuals
 DPRatio_Personal.consumption.expenditures.func <- lm(
 Personal.consumption.expenditures_resi^2 ~ DPRatio, data = combined_data_DPRatio)
@@ -2009,6 +2009,36 @@ combined_data_UNE$Personal.consumption.expenditures_growth = growth_rate(as.nume
 combined_data_UNE$Gross.national.product_growth = growth_rate(as.numeric(combined_data_UNE$Gross.national.product))
 combined_data_UNE$Nondurable.goods_growth = growth_rate(as.numeric(combined_data_UNE$Nondurable.goods))
 combined_data_UNE$Gross.private.domestic.investment_growth = growth_rate(as.numeric(combined_data_UNE$Gross.private.domestic.investment))
+
+```
+
+
+
+```{r}
+install.packages("lmtest")
+
+
+```
+```{r}
+library(lmtest)
+
+#IPO_Gross
+bptest(IPO_Gross_GDP_lm)
+bptest(IPO_Gross_Gross.national.product_lm)
+bptest(IPO_Gross_Nondurable.goods_lm)
+bptest(IPO_Gross_Gross.private.domestic.investment_lm)
+bptest(IPO_Gross_Personal.consumption.expenditures_lm)
+
+#DPRatio
+bptest(DPRatio_GDP_lm)
+bptest(DPRatio_Gross.national.product_lm)
+bptest(DPRatio_Nondurable.goods_lm)
+bptest(DPRatio_Gross.private.domestic.investment_lm)
+bptest(DPRatio_Personal.consumption.expenditures_lm)
+
+
+
+
 
 ```
 
