@@ -2,7 +2,9 @@
 title: "GDP_Prem_Tests"
 author: "Nathan Barretto"
 date: "2024-05-19"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -114,8 +116,8 @@ proxy_data$Quarter = quarter_makers(proxy_data$months)
 
 ```{r}
 #download hmisc package
-install.packages("Hmisc")
-install.packages("acepack")
+#install.packages("Hmisc")
+#install.packages("acepack")
 ```
 
 
@@ -1734,26 +1736,26 @@ summary(DPRatio_Personal.consumption.expenditures.func)
 
 ```{r}
 #Start with EPBound and GDP
-EPBound_GDP_lm <- lm(GDP ~ EPBound, data = combined_data_EPBound)
+EPBound_GDP_lm <- lm(as.numeric(GDP) ~ EPBound, data = combined_data_EPBound)
 combined_data_EPBound$GDP_resi <- EPBound_GDP_lm$residuals
 EPBound_GDP.func <- lm(GDP_resi^2 ~ EPBound, data = combined_data_EPBound)
 summary(EPBound_GDP.func)
 
 #EPBound and GNP
-EPBound_Gross.national.product_lm <- lm(Gross.national.product ~ EPBound, data = combined_data_EPBound)
+EPBound_Gross.national.product_lm <- lm(as.numeric(Gross.national.product) ~ as.numeric(EPBound), data = combined_data_EPBound)
 combined_data_EPBound$Gross.national.product_resi <- EPBound_Gross.national.product_lm$residuals
 EPBound_Gross.national.product.func <- lm(Gross.national.product_resi^2 ~ EPBound, data = combined_data_EPBound)
 summary(EPBound_Gross.national.product.func)
 
 #EPBound and Nondurable goods
-EPBound_Nondurable.goods_lm <- lm(Nondurable.goods ~ EPBound, data = combined_data_EPBound)
+EPBound_Nondurable.goods_lm <- lm(as.numeric(Nondurable.goods) ~ as.numeric(EPBound), data = combined_data_EPBound)
 combined_data_EPBound$Nondurable.goods_resi <- EPBound_Nondurable.goods_lm$residuals
 EPBound_Nondurable.goods.func <- lm(Nondurable.goods_resi^2 ~ EPBound, data = combined_data_EPBound)
 summary(EPBound_Nondurable.goods.func)
 
 
 #EPBound and Gross private domestic investment
-EPBound_Gross.private.domestic.investment_lm <- lm(Gross.private.domestic.investment ~ EPBound, data = combined_data_EPBound)
+EPBound_Gross.private.domestic.investment_lm <- lm(as.numeric(Gross.private.domestic.investment) ~ as.numeric(EPBound), data = combined_data_EPBound)
 combined_data_EPBound$Gross.private.domestic.investment_resi <- EPBound_Gross.private.domestic.investment_lm$residuals
 EPBound_Gross.private.domestic.investment.func <- lm(Gross.private.domestic.investment_resi^2 ~ EPBound, data = combined_data_EPBound)
 summary(EPBound_Gross.private.domestic.investment.func)
@@ -1761,7 +1763,7 @@ summary(EPBound_Gross.private.domestic.investment.func)
 
 #EPBound and Personal consumption expenditure
 EPBound_Personal.consumption.expenditures_lm <- lm(
-Personal.consumption.expenditures ~ EPBound, data = combined_data_EPBound)
+as.numeric(Personal.consumption.expenditures) ~ as.numeric(EPBound), data = combined_data_EPBound)
 combined_data_EPBound$Personal.consumption.expenditures_resi <- EPBound_Personal.consumption.expenditures_lm$residuals
 EPBound_Personal.consumption.expenditures.func <- lm(
 Personal.consumption.expenditures_resi^2 ~ EPBound, data = combined_data_EPBound)
@@ -1924,9 +1926,10 @@ summary(UNE_Personal.consumption.expenditures.func)
 
 
 ```{r}
-#combined_data_IPO_Gross$Year = as.integer(unlist(combined_data_IPO_Gross$Year))
+combined_data_IPO_Gross$Year = as.integer(unlist(combined_data_IPO_Gross$Year))
+IPO_Gross_Year <- as.data.frame(table(unlist(combined_data_IPO_Gross$Year)))
 #line plot of gross_ipo by recession over time
-#ggplot(data=combined_data_IPO_Gross, aes(x= Year, y= IPO_Gross, group= recession)) +
+#ggplot(data=combined_data_IPO_Gross, aes(x= Goods.2, y= IPO_Gross, group= recession)) +
   #geom_line(linetype="dashed", color="red", size=1.4)+
   #geom_point(color="green", size=5)
 ```
@@ -2015,7 +2018,7 @@ combined_data_UNE$Gross.private.domestic.investment_growth = growth_rate(as.nume
 
 
 ```{r}
-install.packages("lmtest")
+#install.packages("lmtest")
 
 
 ```
@@ -2037,19 +2040,561 @@ bptest(DPRatio_Gross.private.domestic.investment_lm)
 bptest(DPRatio_Personal.consumption.expenditures_lm)
 
 
+#EPBound
+bptest(EPBound_GDP_lm)
+bptest(EPBound_Gross.national.product_lm)
+bptest(EPBound_Nondurable.goods_lm)
+bptest(EPBound_Gross.private.domestic.investment_lm)
+bptest(EPBound_Personal.consumption.expenditures_lm)
 
 
 
+#Gives same results as initial Breusch-Pagan Test code above
+#so we can stop here
 ```
 
 
 
 ```{r}
+#Time series graphs
 #Look at graphs of these growth rates versus the various equity premium/risk aversion measures
+#install.packages("TSstudio")
+```
+```{r}
+#library("TSstudio")
+```
+
+
+[**3 Equity Premium measure graphs against various GDP measures, ALL YEARS **]
+
+```{r}
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$GDP
+y3 = combined_data_IPO_Gross$Gross.national.product
+y4 = combined_data_IPO_Gross$Gross.private.domestic.investment
+y5 = combined_data_IPO_Gross$Nondurable.goods
+y6 = combined_data_IPO_Gross$Personal.consumption.expenditures
+
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs various GDP Measures, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs. various GDP measures")
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+lines(x, y3, pch=18, col="green", type="b", lty=2)
+lines(x, y4, pch=18, col="black", type="b", lty=2)
+lines(x, y5, pch=18, col="yellow", type="b", lty=2)
+lines(x, y6, pch=18, col="orange", type="b", lty=2)
+legend(2005, 90, legend=c("IPO Gross", "GDP", "GNP", "GPDI", "NG", "PCE" ),
+       col=c("red", "blue", "green", "black", "yellow","orange"), lty=1:2, cex=0.8)
+
 
 
 ```
 
+
+
+
+```{r}
+#EP Bound 
+#Y-axis values are too different so split into 2
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+
+plot(x, y1, type="b", pch=16, col="red", main="EPBound Over Time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound")
+```
+
+
+```{r}
+x = combined_data_EPBound$Year
+y2 = combined_data_EPBound$GDP
+y3 = combined_data_EPBound$Gross.national.product
+y4 = combined_data_EPBound$Gross.private.domestic.investment
+y5 = combined_data_EPBound$Nondurable.goods
+y6 = combined_data_EPBound$Personal.consumption.expenditures
+
+plot(x, y2, type="b", pch=16, col="red", main="Various GDP Measures over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="Various GDP measures", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y3, pch=18, col="green", type="b", lty=2)
+lines(x, y4, pch=18, col="black", type="b", lty=2)
+lines(x, y5, pch=18, col="yellow", type="b", lty=2)
+lines(x, y6, pch=18, col="orange", type="b", lty=2)
+legend(2005, 90, legend=c("GDP", "GNP", "GPDI", "NG", "PCE" ),
+       col=c("red", "blue", "green", "black", "yellow"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#DP ratio
+#Y-axis values are too different so split into 2
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio Over Time, 1960 - 2015", sub="1960-2011",
+  xlab="Year", ylab="DPRatio")
+
+```
+
+
+```{r}
+x = combined_data_DPRatio$Year
+y2 = combined_data_DPRatio$GDP
+y3 = combined_data_DPRatio$Gross.national.product
+y4 = combined_data_DPRatio$Gross.private.domestic.investment
+y5 = combined_data_DPRatio$Nondurable.goods
+y6 = combined_data_DPRatio$Personal.consumption.expenditures
+
+plot(x, y2, type="b", pch=16, col="red", main="Various GDP Measures over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Various GDP measures", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y3, pch=18, col="green", type="b", lty=2)
+lines(x, y4, pch=18, col="black", type="b", lty=2)
+lines(x, y5, pch=18, col="yellow", type="b", lty=2)
+lines(x, y6, pch=18, col="orange", type="b", lty=2)
+legend(2005, 90, legend=c("GDP", "GNP", "GPDI", "NG", "PCE" ),
+       col=c("red", "blue", "green", "black", "yellow"), lty=1:2, cex=0.8)
+```
+
+
+
+
+
+
+
+[**Gross IPO over time vs various GDP Measure Growth Rates**]
+```{r}
+#Gross IPO vs GDP growth over time 
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$GDP_growth
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs GDP growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs GDP", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "GDP growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#Gross IPO vs NDG growth over time 
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$Nondurable.goods_growth
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs NDG growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs NDG", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "NDG growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#Gross IPO vs PCE growth over time 
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$Personal.consumption.expenditures_growth
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs PCE growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs PCE", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "PCE growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#Gross IPO vs GPDI growth over time 
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$Gross.private.domestic.investment_growth
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs GPDI growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs GPDI", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "GPDI growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#Gross IPO vs GNP growth over time 
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$Gross.national.product_growth
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs GNP growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs GNP", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "GNP growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+
+
+[**Gross IPO over time vs various GDP Measures**]
+
+```{r}
+#Gross IPO vs GDP over time 
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$GDP
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs GDP over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs GDP", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "GDP"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#Gross IPO vs NDG over time 
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$Nondurable.goods
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs NDG over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs NDGs", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "NDG"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#Gross IPO vs PCE over time 
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$Personal.consumption.expenditures
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs PCE over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs PCE", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "PCE"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#Gross IPO vs GPDI over time 
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$Gross.private.domestic.investment
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs PCE over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs PCE", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "GPDI"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#Gross IPO vs GNP over time
+x = combined_data_IPO_Gross$Year
+y1 = combined_data_IPO_Gross$IPO_Gross
+y2 = combined_data_IPO_Gross$Gross.national.product
+plot(x, y1, type="b", pch=16, col="red", main="Gross IPO vs GNP over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs GNP", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("Gross IPO", "GNP"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+
+
+
+
+
+
+[**EPBound vs various gdp measures**]
+
+
+```{r}
+#EPBound vs GDP growth over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$GDP_growth
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs GDP growth over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound vs GDP", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "GDP growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#EPBound vs NDG growth over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$Nondurable.goods_growth
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs NDG growth over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound vs NDG", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "NDG growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#EPBound vs PCE growth over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$Personal.consumption.expenditures_growth
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs PCE growth over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound vs PCE", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "PCE growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#EPBound vs GPDI growth over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$Gross.private.domestic.investment_growth
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs GPDI growth over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound vs GPDI", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "GPDI growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#EPBound vs GNP growth over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$Gross.national.product_growth
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs GNP  growth over time, 1996 - 2011", sub="1960-2015",
+  xlab="Year", ylab="EPBound vs GNP", xlim=c(1996, 2011), ylim=c(0, 2.5))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "GNP growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+
+
+
+```{r}
+#EPBound vs GDP over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$GDP
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs GDP over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound vs GDPs", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "GDP"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#EPBound vs NDG over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$Nondurable.goods
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs NDG over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound vs NDG", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "NDG"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#EPBound vs PCE over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$Personal.consumption.expenditures
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs PCE over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound vs PCE", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "PCE"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#EPBound vs GPDI over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$Gross.private.domestic.investment
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs GPDI over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound vs GPDI", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "GPDI"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#EPBound vs GNP over time 
+x = combined_data_EPBound$Year
+y1 = combined_data_EPBound$EPBound
+y2 = combined_data_EPBound$Gross.national.product_growth
+plot(x, y1, type="b", pch=16, col="red", main="EPBound vs GNP over time, 1996 - 2011", sub="1996-2011",
+  xlab="Year", ylab="EPBound vs GNP", xlim=c(1996, 2011))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("EPBound", "GNP"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+
+
+
+
+[**DPRatio over time vs various GDP Measure Growth Rates**]
+```{r}
+#DPRatio vs GDP growth over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$GDP_growth
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs GDP growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="DPRatio vs GDP", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "GDP growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#DPRatio vs NDG growth over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$Nondurable.goods_growth
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs NDG growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="DPRatio vs NDG", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "NDG growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#DPRatio vs PCE growth over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$Personal.consumption.expenditures_growth
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs PCE growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="DPRatio vs PCE", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "PCE growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#DPRatio vs GPDI growth over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$Gross.private.domestic.investment_growth
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs GPDI growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs GPDI", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "GPDI growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#Gross IPO vs GNP growth over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$Gross.national.product_growth
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs GNP growth over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="DPRatio vs GNP", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "GNP growth"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+
+
+[**DPRatio over time vs various GDP Measures**]
+
+
+```{r}
+#DPRatio vs GDP over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$GDP
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs GDP over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="DPRatio vs GDP", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "GDP"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#DPRatio vs NDG over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$Nondurable.goods
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs NDG over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="DPRatio vs NDG", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "NDG"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+```{r}
+#DPRatio vs PCE over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$Personal.consumption.expenditures
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs PCE over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="DPRatio vs PCE", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "PCE"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#DPRatio vs GPDI over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$Gross.private.domestic.investment
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs GPDI over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="Gross IPO vs GPDI", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "GPDI"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
+
+
+```{r}
+#Gross IPO vs GNP over time 
+x = combined_data_DPRatio$Year
+y1 = combined_data_DPRatio$DPRatio
+y2 = combined_data_DPRatio$Gross.national.product
+plot(x, y1, type="b", pch=16, col="red", main="DPRatio vs GNP over time, 1960 - 2015", sub="1960-2015",
+  xlab="Year", ylab="DPRatio vs GNP", xlim=c(1960, 2015))
+# Add lines for gdp measures
+lines(x, y2, pch=18, col="blue", type="b", lty=2)
+legend(2005, 90, legend=c("DPRatio", "GNP"),
+       col=c("red", "blue"), lty=1:2, cex=0.8)
+```
 
 
 
