@@ -691,7 +691,7 @@ boxplot( EPBound~Quarter,data=combined_data_EPBound, main="EPBound vs Yearly Qua
 ```
 
 ```{r}
-#Run correlation tests between different GDP measures and gross IPO
+#Run correlation tests between different GDP measures and EPBound
 #Years: 1960 to 2015
 #Correlation with GNP
 cor(combined_data_EPBound$EPBound, as.numeric(combined_data_EPBound$Gross.national.product))
@@ -858,7 +858,7 @@ boxplot(as.numeric(PVS) ~Quarter,data=combined_data_PVS, main="PVS vs Yearly Qua
 ```
 
 ```{r}
-#Run correlation tests between different GDP measures and gross IPO
+#Run correlation tests between different GDP measures and PVS
 #Years: 1960 to 2015
 #Correlation with GNP
 cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$Gross.national.product))
@@ -2595,6 +2595,208 @@ lines(x, y2, pch=18, col="blue", type="b", lty=2)
 legend(2005, 90, legend=c("DPRatio", "GNP"),
        col=c("red", "blue"), lty=1:2, cex=0.8)
 ```
+
+
+
+```{r}
+#Run correlation tests with equity premium, risk aversion measures and GDP growth rate measures
+```
+
+
+
+
+```{r}
+#Run correlation tests between different GDP growth measures and gross IPO
+#Years: 1960 to 2015
+#Correlation with GNP growth rates
+cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Gross.national.product_growth))
+
+#Correlation with GDP growth rates
+cor(combined_data_IPO_Gross$IPO_Gross,  as.numeric(combined_data_IPO_Gross$GDP_growth))
+
+#Correlation with GPDI growth rates
+cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Gross.private.domestic.investment_growth))
+
+#Correlation with nondurable goods growth rates
+cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Nondurable.goods_growth))
+
+#Correlation with personal consumption expenditures growth rates
+cor(combined_data_IPO_Gross$IPO_Gross, as.numeric(combined_data_IPO_Gross$Personal.consumption.expenditures_growth))
+
+
+```
+
+```{r}
+#Run correlation tests between different GDP growth measures and DPRatio
+#Years: 1960 to 2015 (Full Data)
+#Correlation with GNP
+cor(combined_data_DPRatio$DPRatio, as.numeric(combined_data_DPRatio$Gross.national.product_growth))
+
+#Correlation with GDP
+cor(combined_data_DPRatio$DPRatio,  as.numeric(combined_data_DPRatio$GDP_growth))
+
+#Correlation with GPDI
+cor(combined_data_DPRatio$DPRatio, as.numeric(combined_data_DPRatio$Gross.private.domestic.investment_growth))
+
+#Correlation with nondurable goods
+cor(combined_data_DPRatio$DPRatio, as.numeric(combined_data_DPRatio$Nondurable.goods_growth))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_DPRatio$DPRatio, as.numeric(combined_data_DPRatio$Personal.consumption.expenditures_growth))
+
+```
+
+```{r}
+#Run correlation tests between different GDP growth measures and EPBound
+#Years: 1960 to 2015
+#Correlation with GNP
+cor(combined_data_EPBound$EPBound, as.numeric(combined_data_EPBound$Gross.national.product_growth))
+
+#Correlation with GDP
+cor(combined_data_EPBound$EPBound,  as.numeric(combined_data_EPBound$GDP_growth))
+
+#Correlation with GPDI
+cor(combined_data_EPBound$EPBound, as.numeric(combined_data_EPBound$Gross.private.domestic.investment_growth))
+
+#Correlation with nondurable goods
+cor(combined_data_EPBound$EPBound, as.numeric(combined_data_EPBound$Nondurable.goods_growth))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_EPBound$EPBound, as.numeric(combined_data_EPBound$Personal.consumption.expenditures_growth))
+
+```
+
+```{r}
+#Run correlation tests between different GDP growth measures and PVS
+#Years: 1960 to 2015
+#Correlation with GNP
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$Gross.national.product_growth))
+
+#Correlation with GDP
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$GDP_growth))
+
+#Correlation with GPDI
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$Gross.private.domestic.investment_growth))
+
+#Correlation with nondurable goods
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$Nondurable.goods_growth))
+
+
+#Correlation with personal consumption expenditures
+cor(as.numeric(combined_data_PVS$PVS), as.numeric(combined_data_PVS$Personal.consumption.expenditures_growth))
+
+```
+
+
+
+```{r}
+#Run correlation tests between different GDP growth measures and Surplus Consumption Ratio
+#Years: 1960 to 2015 
+#Correlation with GNP
+cor(combined_data_SCR$SCR, as.numeric(combined_data_SCR$Gross.national.product_growth))
+
+#Correlation with GDP
+cor(combined_data_SCR$SCR,  as.numeric(combined_data_SCR$GDP_growth))
+
+#Correlation with GPDI
+cor(combined_data_SCR$SCR, as.numeric(combined_data_SCR$Gross.private.domestic.investment_growth))
+
+#Correlation with nondurable goods
+cor(combined_data_SCR$SCR, as.numeric(combined_data_SCR$Nondurable.goods_growth))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_SCR$SCR, as.numeric(combined_data_SCR$Personal.consumption.expenditures_growth))
+
+```
+
+```{r}
+#Run correlation tests between different GDP growth measures and Aggregate Risk Aversion
+#1990 to 2010
+#Correlation with GNP
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, as.numeric(combined_data_Aggregate_Risk_Aversion$Gross.national.product_growth))
+
+#Correlation with GDP
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion,as.numeric(combined_data_Aggregate_Risk_Aversion$GDP_growth))
+
+#Correlation with GPDI
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, as.numeric(combined_data_Aggregate_Risk_Aversion$Gross.private.domestic.investment_growth))
+
+#Correlation with nondurable goods
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, as.numeric(combined_data_Aggregate_Risk_Aversion$Nondurable.goods_growth))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion, as.numeric(combined_data_Aggregate_Risk_Aversion$Personal.consumption.expenditures_growth))
+
+```
+
+```{r}
+#Run correlation tests between different GDP growth measures and UNE 
+#Years: 1960 to 2015
+#Correlation with GNP
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$Gross.national.product_growth))
+
+#Correlation with GDP
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$GDP_growth))
+
+#Correlation with GPDI
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$Gross.private.domestic.investment_growth))
+
+#Correlation with nondurable goods
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$Nondurable.goods_growth))
+
+
+#Correlation with personal consumption expenditures
+cor(combined_data_UNE$UNE, as.numeric(combined_data_UNE$Personal.consumption.expenditures_growth))
+
+```
+
+```{r}
+#create time series dates for all datasets
+date_makers = function(yr, quart){
+result <- c()
+m = 1
+while (m < length(quart)) {
+  if (quart[i] ==  "Q1"){
+    x <- paste('01','01', yr[m], sep = "/")
+    result <- c(as.Date(x, format="%m/%d/%Y"), m)
+    
+  }
+  else if (quart[i] ==  "Q2"){
+    x <- paste('04','01', yr[m], sep = "/")
+    result <- c(as.Date(x, format="%m/%d/%Y"), m)
+  }
+  else if (quart[i] ==  "Q3"){
+    x <- paste('07','01', yr[m], sep = "/")
+    result <- c(as.Date(x, format="%m/%d/%Y"), m)
+  }
+  else {
+    x <- paste('10','01', yr[m], sep = "/")
+    result <- c(as.Date(x, format="%m/%d/%Y"), m)
+  }
+  
+  m = m + 1
+}
+return (result)
+}
+
+
+
+```
+
+
+```{r}
+#create date column in all datasets using date maker function
+combined_data_IPO_Gross$Date = date_makers(combined_data_IPO_Gross$Year,
+                                           combined_data_IPO_Gross$Quarter)
+
+```
+
+
+`
 
 
 
