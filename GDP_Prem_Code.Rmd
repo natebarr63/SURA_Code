@@ -3503,6 +3503,311 @@ cor.lag(as.numeric(combined_data_UNE$UNE), as.numeric(combined_data_UNE$Personal
 
 
 
+```{r}
+library(tidyverse)
+#importing the 1990-2023 yield curve dataset:
+yield_data <- read_csv("yield_curves.csv")
+
+
+```
+
+
+
+```{r}
+#Code Source: ChatGPT
+#Create new dataset with only the first of the month with the yield curve dataset
+# Load necessary libraries
+library(dplyr)
+library(lubridate)
+
+#Create dummy dataset to store colnames for later transfer
+yield_data_placeholder <- yield_data
+# Rename columns for easier handling
+colnames(yield_data) <- c("Date", paste0("V", 2:ncol(yield_data)))
+
+# Convert the Date column to Date type
+yield_data$Date <- as.Date(yield_data$Date, format = "%m/%d/%y")
+
+# Group by year and month, then slice the last row of each group to get the 
+#first date of the month
+first_of_month <- yield_data %>%
+  group_by(year = year(Date), month = month(Date)) %>%
+  slice(n()) %>%
+  ungroup() %>%
+  select(-year, -month)
+
+# Optionally, write the result to a new CSV file
+write.csv(first_of_month, "yield_data_mod.csv", row.names = FALSE)
+
+
+```
+
+
+```{r}
+#Open new modified dataset
+
+library(tidyverse)
+#importing the 1990-2023 yield curve dataset:
+yield_data_mod <- read_csv("yield_data_mod.csv")
+colnames(yield_data_mod) <- colnames(yield_data_placeholder)
+
+```
+```{r}
+#rename column names 
+colnames(yield_data_mod)[2] <- "One_Month"
+colnames(yield_data_mod)[3] <- "Two_Month"
+colnames(yield_data_mod)[4] <- "Three_Month"
+colnames(yield_data_mod)[5] <- "Four_Month"
+colnames(yield_data_mod)[6] <- "Six_Month"
+colnames(yield_data_mod)[7] <- "One_Yr"
+colnames(yield_data_mod)[8] <- "Two_Yr"
+colnames(yield_data_mod)[9] <- "Three_Yr"
+colnames(yield_data_mod)[10] <- "Five_Yr"
+colnames(yield_data_mod)[11] <- "Seven_Yr"
+colnames(yield_data_mod)[12] <- "Ten_Yr"
+colnames(yield_data_mod)[13] <- "Twenty_Yr"
+colnames(yield_data_mod)[14] <- "Thirty_Yr"
+```
+
+
+
+```{r}
+#create columns for differences in yield curves of the following time frames:
+
+#30yr/1month, 10yr/1month, 5yr/1month, 1yr/1month, 6month/1month, 
+
+yield_data_mod$Thirty_Yr_One_Month_Difference <- yield_data_mod$Thirty_Yr - yield_data_mod$One_Month
+yield_data_mod$Ten_Yr_One_Month_Difference <- yield_data_mod$Ten_Yr - yield_data_mod$One_Month
+yield_data_mod$Five_Yr_One_Month_Difference <- yield_data_mod$Five_Yr - yield_data_mod$One_Month
+yield_data_mod$One_Yr_One_Month_Difference <- yield_data_mod$One_Yr - yield_data_mod$One_Month
+yield_data_mod$Six_Month_One_Month_Difference <- yield_data_mod$Six_Month - yield_data_mod$One_Month
+```
+
+
+```{r}
+#Convert yield curve data now to a quarterly dataset 
+#will use this with the quarterly gdp growth data
+yield_data_quarterly = yield_data_mod[seq(1, nrow(yield_data_mod), 3), ]
+```
+
+
+```{r}
+#Create a dataset from 1990 - 2015 from the quarterly GDP growth data
+#So the correlation tests have the same dimensions
+US_GDP_Data_1990_2015 <- gdp_data_mod_final[c(121:224),]
+#Subset yield curve quarterly dataset to just 1990 - 2015
+yield_data_quarterly_1990_2015 <- yield_data_quarterly[c(1:104),]
+```
+
+
+```{r}
+#install package needed for lead/lag correlation
+#if(!require('YRmisc')) {
+ # install.packages('YRmisc')
+  library('YRmisc')
+#}
+```
+```{r}
+#rename gdp dataset columns
+colnames(US_GDP_Data_1990_2015)[4] <- "Personal.consumption.expenditures"
+colnames(US_GDP_Data_1990_2015)[7] <- "Nondurable.goods"
+colnames(US_GDP_Data_1990_2015)[9] <- "Gross.private.domestic.investment"
+colnames(US_GDP_Data_1990_2015)[30] <- "Gross.national.product"
+
+
+```
+
+
+
+
+```{r}
+#start correlation tests
+#start with GDP growth 
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(US_GDP_Data_1990_2015$GDP), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$GDP), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$GDP), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$GDP), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$GDP), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+```
+
+
+```{r}
+#Next GNP growth 
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.national.product), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.national.product), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.national.product), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.national.product), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.national.product), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+
+```
+
+
+```{r}
+#Next PCE growth 
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Personal.consumption.expenditures), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Personal.consumption.expenditures), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Personal.consumption.expenditures), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Personal.consumption.expenditures), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Personal.consumption.expenditures), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+
+```
+
+```{r}
+#Next Nondurable goods growth 
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Nondurable.goods), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Nondurable.goods), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Nondurable.goods), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Nondurable.goods), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Nondurable.goods), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+
+```
+
+
+```{r}
+#Next Gross Private Domestic Investment growth 
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.private.domestic.investment), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.private.domestic.investment), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.private.domestic.investment), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.private.domestic.investment), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(US_GDP_Data_1990_2015$Gross.private.domestic.investment), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+
+```
+
+
+
+
+```{r}
+#Now we can run correlations with the equity premium/risk aversion measures
+combined_data_IPO_Gross_1990_2015 <-combined_data_IPO_Gross[c(121:224),]
+combined_data_SCR_1990_2015 <-combined_data_SCR[c(121:224),]
+combined_data_UNE_1990_2015 <-combined_data_UNE[c(121:224),]
+combined_data_DPRatio_1990_2015 <-combined_data_DPRatio[c(121:224),]
+combined_data_PVS_1990_2015 <-combined_data_PVS[c(80:183),]
+yield_data_quarterly_1990_2010 <- yield_data_quarterly[c(1:84),] 
+yield_data_quarterly_1996_2011 <- yield_data_quarterly[c(24:87),] 
+```
+
+
+
+```{r}
+#start correlation tests
+#start with Gross IPO 
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(combined_data_IPO_Gross_1990_2015$IPO_Gross), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_IPO_Gross_1990_2015$IPO_Gross), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_IPO_Gross_1990_2015$IPO_Gross), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_IPO_Gross_1990_2015$IPO_Gross), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_IPO_Gross_1990_2015$GDP), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+```
+
+
+```{r}
+#start correlation tests
+#Next EP Bound
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(combined_data_EPBound$EPBound), as.numeric(yield_data_quarterly_1996_2011$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_EPBound$EPBound), as.numeric(yield_data_quarterly_1996_2011$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_EPBound$EPBound), as.numeric(yield_data_quarterly_1996_2011$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_EPBound$EPBound), as.numeric(yield_data_quarterly_1996_2011$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_EPBound$EPBound), as.numeric(yield_data_quarterly_1996_2011$Six_Month_One_Month_Difference), 5,5)
+
+
+```
+
+
+```{r}
+#start correlation tests
+#Next DPRatio
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(combined_data_DPRatio_1990_2015$DPRatio), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_DPRatio_1990_2015$DPRatio), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_DPRatio_1990_2015$DPRatio), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_DPRatio_1990_2015$DPRatio), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_DPRatio_1990_2015$DPRatio), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+```
+
+```{r}
+#start correlation tests
+#Next UNE
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(combined_data_UNE_1990_2015$UNE), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_UNE_1990_2015$UNE), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_UNE_1990_2015$UNE), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_UNE_1990_2015$UNE), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_UNE_1990_2015$UNE), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+```
+
+
+```{r}
+#start correlation tests
+#Next Surplus Consumption Ratio
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(combined_data_SCR_1990_2015$SCR), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_SCR_1990_2015$SCR), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_SCR_1990_2015$SCR), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_SCR_1990_2015$SCR), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_SCR_1990_2015$SCR), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+```
+
+
+```{r}
+#start correlation tests
+#Next Price of Volatile Stocks
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(combined_data_PVS_1990_2015$PVS), as.numeric(yield_data_quarterly_1990_2015$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_PVS_1990_2015$PVS), as.numeric(yield_data_quarterly_1990_2015$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_PVS_1990_2015$PVS), as.numeric(yield_data_quarterly_1990_2015$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_PVS_1990_2015$PVS), as.numeric(yield_data_quarterly_1990_2015$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_PVS_1990_2015$PVS), as.numeric(yield_data_quarterly_1990_2015$Six_Month_One_Month_Difference), 5,5)
+
+```
+
+
+```{r}
+#start correlation tests
+#Next Aggregate Risk Aversion
+#Going up to 5 quarters of lead and lag
+
+cor.lag(as.numeric(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion), as.numeric(yield_data_quarterly_1990_2010$Thirty_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion), as.numeric(yield_data_quarterly_1990_2010$Ten_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion), as.numeric(yield_data_quarterly_1990_2010$Five_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion), as.numeric(yield_data_quarterly_1990_2010$One_Yr_One_Month_Difference), 5,5)
+cor.lag(as.numeric(combined_data_Aggregate_Risk_Aversion$Aggregate_Risk_Aversion), as.numeric(yield_data_quarterly_1990_2010$Six_Month_One_Month_Difference), 5,5)
+
+
+```
+
+
+
+
+
+
+
 
 
 
